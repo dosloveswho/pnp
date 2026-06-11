@@ -1483,6 +1483,7 @@ async function loadDashboard() {
   if (!logs.length) {
     actList.innerHTML = '<div class="no-data"><p>No recent activity</p></div>';
   } else {
+    logs.forEach(l => console.log(l.timestamp));
     actList.innerHTML = logs.map(l => `
       <div class="activity-item">
         <div class="activity-dot"></div>
@@ -2078,7 +2079,10 @@ function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function formatDate(date) {
-  return new Date(date).toLocaleString('en-PH', {
+  // Tell JavaScript the timestamp from D1 is UTC
+  const utcDate = new Date(date.replace(' ', 'T') + 'Z');
+
+  return utcDate.toLocaleString('en-PH', {
     timeZone: 'Asia/Manila',
     month: 'short',
     day: 'numeric',
