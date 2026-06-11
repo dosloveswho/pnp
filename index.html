@@ -16,7 +16,7 @@
 <!-- Discord / Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="PNP — Police Records Management System">
-<meta name="twitter:description" content="Secure Police Records Management System">
+<meta name="twitter:description" content="Serving and protecting through efficient record management and public services.">
 <meta name="twitter:image" content="https://pnp.appwrite.network/PHRRP.png">
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -1194,7 +1194,7 @@ async function loadAdmin(){
   else{sidebarBadge.textContent=pending.length;sidebarBadge.style.display='block';pendingList.innerHTML=pending.map(u=>`<div class="verify-card"><div class="verify-card-info"><h4>${escHtml(u.username)} <span style="font-size:12px;font-weight:400;color:var(--gray-300);">${escHtml(u.full_name||'')}</span></h4><p><strong style="color:var(--gold-300);">Rank:</strong> ${escHtml(u.rank||'—')} &nbsp;|&nbsp;<strong style="color:var(--gold-300);">Badge:</strong> ${escHtml(u.badge_number||'—')} &nbsp;|&nbsp;<strong style="color:var(--gold-300);">Station:</strong> ${escHtml(u.station||'—')}</p><div class="verify-meta">Registered: ${formatDate(u.created_at)}</div></div><div class="verify-card-actions"><button class="btn btn-secondary btn-sm" onclick="openVerifyModal(${JSON.stringify(u).replace(/"/g,'&quot;')})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Review</button><button class="btn btn-success btn-sm" onclick="quickApprove(${u.id},'${escHtml(u.username)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Approve</button><button class="btn btn-danger btn-sm" onclick="quickReject(${u.id},'${escHtml(u.username)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Reject</button></div></div>`).join('');}
   const utbody=document.getElementById('users-table-body');
   if(!users.length){utbody.innerHTML='<tr><td colspan="9"><div class="no-data"><p>No users found</p></div></td></tr>';}
-  else{utbody.innerHTML=users.map(u=>`<tr><td>${u.id}</td><td style="font-weight:600;color:var(--white)">${escHtml(u.username)}</td><td>${escHtml(u.full_name||'—')}</td><td><span class="role-badge ${u.role}">${u.role}</span>${u.rank_verification_status==='pending'?'<span class="badge badge-pending" style="margin-left:4px;font-size:9px;">Rank Pending</span>':''}</td><td>${renderUserStatusBadge(u.status)}</td><td style="font-size:12px;color:var(--gray-300);">${escHtml(u.rank||'—')}</td><td>${formatDate(u.created_at)}</td><td>${u.last_login?formatDate(u.last_login):'—'}</td><td><div class="actions-cell">${u.username!=='LIGHTXZXZ'?`<button class="btn btn-secondary btn-sm" onclick="openChangeRole(${u.id},'${escHtml(u.username)}','${u.role}')">Role</button><button class="btn btn-sm" style="background:rgba(214,136,16,0.15);color:#F5B041;border:1px solid rgba(214,136,16,0.3);" onclick="openResetPw(${u.id},'${escHtml(u.username)}')">Reset PW</button>${u.status==='active'?'<button class="btn btn-danger btn-sm" onclick="setUserStatus('+u.id+',\'suspended\')">Suspend</button>':'<button class="btn btn-success btn-sm" onclick="setUserStatus('+u.id+',\'active\')">Activate</button>'}${u.status!=='banned'?'<button class="btn btn-danger btn-sm" onclick="setUserStatus('+u.id+',\'banned\')">Ban</button>':''}<button class="btn btn-danger btn-sm btn-icon" onclick="confirmDeleteUser(${u.id},'${escHtml(u.username)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:'<span style="color:var(--gray-400);font-size:12px;">Protected</span>'}</div></td></tr>`).join('');}
+  else{utbody.innerHTML=users.map(u=>`<tr><td>${u.id}</td><td style="font-weight:600;color:var(--white)">${escHtml(u.username)}</td><td>${escHtml(u.full_name||'—')}</td><td><span class="role-badge ${u.role}">${u.role}</span>${u.rank_verification_status==='pending'?'<span class="badge badge-pending" style="margin-left:4px;font-size:9px;">Rank Pending</span>':''}</td><td>${renderUserStatusBadge(u.status)}</td><td style="font-size:12px;color:var(--gray-300);">${escHtml(u.rank||'—')}</td><td>${formatDate(u.created_at)}</td><td>${u.last_login?formatDate(u.last_login):'—'}</td><td><div class="actions-cell">${u.username!=='LIGHTXZXZ'?`<button class="btn btn-secondary btn-sm" onclick="openChangeRole(${u.id},'${escHtml(u.username)}','${u.role}')">Role</button><button class="btn btn-sm" style="background:rgba(214,136,16,0.15);color:#F5B041;border:1px solid rgba(214,136,16,0.3);" onclick="openResetPw(${u.id},'${escHtml(u.username)}')">Reset PW</button><button class="btn btn-sm" style="background:rgba(201,162,39,0.12);color:var(--gold-300);border:1px solid rgba(201,162,39,0.35);" data-uid="${u.id}" data-uname="${escHtml(u.username)}" data-rank="${escHtml(u.rank||'')}" data-badge="${escHtml(u.badge_number||'')}" data-station="${escHtml(u.station||'')}" onclick="openEditRankFromBtn(this)">Rank</button>${u.status==='active'?'<button class="btn btn-danger btn-sm" onclick="setUserStatus('+u.id+',\'suspended\')">Suspend</button>':'<button class="btn btn-success btn-sm" onclick="setUserStatus('+u.id+',\'active\')">Activate</button>'}${u.status!=='banned'?'<button class="btn btn-danger btn-sm" onclick="setUserStatus('+u.id+',\'banned\')">Ban</button>':''}<button class="btn btn-danger btn-sm btn-icon" onclick="confirmDeleteUser(${u.id},'${escHtml(u.username)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:'<span style="color:var(--gray-400);font-size:12px;">Protected</span>'}</div></td></tr>`).join('');}
   const logs=logsData.logs||[]; const ltbody=document.getElementById('logs-table-body');
   if(!logs.length){ltbody.innerHTML='<tr><td colspan="4"><div class="no-data"><p>No activity logs</p></div></td></tr>';}
   else{ltbody.innerHTML=logs.map(l=>`<tr><td style="font-family:var(--font-mono);font-size:11px;">${formatDate(l.timestamp)}</td><td>${escHtml(l.username||'—')}</td><td><span class="badge badge-warning" style="font-size:9px;">${escHtml(l.action)}</span></td><td>${escHtml(l.details||'—')}</td></tr>`).join('');}
@@ -1416,6 +1416,50 @@ function handleAppDecision(appId,decision,username) {
   openModal('modal-app-confirm');
 }
 
+
+// ════════════════════════════════════════════════════════════════
+// EDIT RANK (Admin Panel — Superadmin only)
+// ════════════════════════════════════════════════════════════════
+function openEditRankFromBtn(btn) {
+  // Read values from data-* attributes to avoid quote-escaping issues
+  openEditRank(
+    btn.dataset.uid,
+    btn.dataset.uname,
+    btn.dataset.rank,
+    btn.dataset.badge,
+    btn.dataset.station
+  );
+}
+
+function openEditRank(id, username, rank, badge, station) {
+  document.getElementById('er-user-id').value = id;
+  document.getElementById('er-username-display').textContent = username;
+  document.getElementById('er-avatar').textContent = (username[0] || '?').toUpperCase();
+  document.getElementById('er-rank').value = rank || '';
+  document.getElementById('er-badge').value = badge || '';
+  document.getElementById('er-station').value = station || '';
+  openModal('modal-edit-rank');
+}
+
+async function saveEditRank() {
+  const user_id  = parseInt(document.getElementById('er-user-id').value);
+  const rank     = document.getElementById('er-rank').value.trim();
+  const badge    = document.getElementById('er-badge').value.trim();
+  const station  = document.getElementById('er-station').value.trim();
+
+  const res = await api('POST', '/users/edit-rank', {
+    user_id,
+    rank:         rank    || null,
+    badge_number: badge   || null,
+    station:      station || null
+  });
+
+  if (res.error) { toast(res.error, 'error'); return; }
+  toast('Rank credentials updated successfully', 'success');
+  closeModal('modal-edit-rank');
+  loadAdmin();
+}
+
 // ════════════════════════════════════════════════════════════════
 // BOOTSTRAP
 // ════════════════════════════════════════════════════════════════
@@ -1428,5 +1472,81 @@ function handleAppDecision(appId,decision,username) {
   }
 })();
 </script>
+
+<!-- ── EDIT RANK MODAL ── -->
+<div id="modal-edit-rank" class="modal-overlay">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--gold-400);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Edit Rank &amp; Credentials
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-edit-rank')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="er-user-id">
+      <div style="background:var(--navy-600);border-radius:var(--radius);padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy-500),var(--gold-500));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--white);flex-shrink:0;" id="er-avatar">?</div>
+        <div>
+          <div style="font-weight:600;color:var(--white);font-size:14px;" id="er-username-display">—</div>
+          <div style="font-size:11px;color:var(--gray-400);margin-top:2px;">Editing rank credentials for this user</div>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Rank / Title</label>
+          <select id="er-rank" class="form-control">
+            <option value="">— No Rank / Civilian —</option>
+            <optgroup label="General Officers">
+              <option>General</option>
+              <option>Lieutenant General</option>
+              <option>Major General</option>
+              <option>Brigadier General</option>
+            </optgroup>
+            <optgroup label="Field Officers">
+              <option>Colonel</option>
+              <option>Lieutenant Colonel</option>
+              <option>Major</option>
+              <option>Captain</option>
+              <option>Lieutenant</option>
+            </optgroup>
+            <optgroup label="Non-Commissioned Officers">
+              <option>Chief Master Sergeant</option>
+              <option>Master Sergeant</option>
+              <option>Staff Sergeant</option>
+              <option>Corporal</option>
+            </optgroup>
+            <optgroup label="Enlisted / Entry">
+              <option>Police Officer</option>
+              <option>Cadet</option>
+              <option>Civilian</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Badge Number</label>
+          <input type="text" id="er-badge" class="form-control" placeholder="e.g. PNP-00123">
+        </div>
+        <div class="form-group">
+          <label>Station / Unit</label>
+          <input type="text" id="er-station" class="form-control" placeholder="e.g. QCPD Station 1">
+        </div>
+      </div>
+      <div style="background:rgba(201,162,39,0.07);border:1px solid rgba(201,162,39,0.2);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--gray-300);margin-top:4px;line-height:1.7;">
+        <strong style="color:var(--gold-400);">Note:</strong> This updates the user's displayed rank, badge, and station directly. To change their system <em>role</em> (Citizen / Police / Superadmin), use the <strong>Role</strong> button instead.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-rank')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEditRank()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Save Rank
+      </button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
