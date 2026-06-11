@@ -650,7 +650,7 @@ textarea.form-control { resize: vertical; min-height: 80px; }
         Logout
       </div>
     </div>
-    <div class="sidebar-footer">PNP MDT v1.0 &bull; Secure Connection</div>
+    <div class="sidebar-footer">PNP MDT v1.0 &bull; DEV LIGHT</div>
   </nav>
 
   <div id="main">
@@ -1446,9 +1446,17 @@ function initApp() {
   navigateTo('dashboard');
 }
 function updateClock() {
-  document.getElementById('topbar-time').textContent = new Date().toLocaleString('en-PH', {
-    month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: true
-  });
+  document.getElementById('topbar-time').textContent =
+    new Date().toLocaleString('en-PH', {
+      timeZone: 'Asia/Manila',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true
+    });
 }
 async function checkPendingVerifications() {
   const data = await api('GET', '/users?role=citizen');
@@ -2069,10 +2077,17 @@ function escHtml(str) {
   if (str == null) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function formatDate(d) {
-  if (!d) return '—';
-  try { return new Date(d).toLocaleDateString('en-PH', { month:'short', day:'numeric', year:'numeric', hour:'2-digit', minute:'2-digit' }); }
-  catch { return d; }
+function formatDate(date) {
+  return new Date(date).toLocaleString('en-PH', {
+    timeZone: 'Asia/Manila',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  });
 }
 function renderStars(level) {
   const l = parseInt(level) || 1;
