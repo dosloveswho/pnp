@@ -375,6 +375,51 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 .admin-note-row { margin-top: 14px; border-top: var(--border); padding-top: 14px; }
 .admin-note-row label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gray-300); margin-bottom: 7px; }
 
+/* ── CRIMINAL MUGSHOT ── */
+.criminal-mugshot-thumb {
+  width: 52px; height: 64px; object-fit: cover; border-radius: 6px;
+  border: 1px solid rgba(201,162,39,0.3); cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  display: block;
+}
+.criminal-mugshot-thumb:hover {
+  transform: scale(1.06); border-color: var(--gold-500);
+  box-shadow: 0 0 10px rgba(201,162,39,0.25);
+}
+.criminal-mugshot-placeholder {
+  width: 52px; height: 64px; background: var(--navy-600);
+  border-radius: 6px; border: 1px dashed rgba(201,162,39,0.2);
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  color: var(--gray-400);
+}
+.criminal-mugshot-placeholder:hover {
+  border-color: rgba(201,162,39,0.5); background: var(--navy-500);
+  color: var(--gray-200);
+}
+.criminal-mugshot-placeholder svg { width: 22px; height: 22px; opacity: 0.5; }
+.criminal-mugshot-placeholder span { font-size: 8px; letter-spacing: 0.5px; text-transform: uppercase; opacity: 0.6; }
+
+/* ── EVIDENCE PREVIEW ── */
+.evidence-preview-placeholder {
+  width: 64px; height: 48px; background: var(--navy-600);
+  border-radius: 6px; border: 1px dashed rgba(201,162,39,0.2);
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 2px; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s; color: var(--gray-400);
+}
+.evidence-preview-placeholder:hover { border-color: rgba(201,162,39,0.5); background: var(--navy-500); color: var(--gray-200); }
+.evidence-preview-placeholder svg { width: 20px; height: 20px; opacity: 0.55; }
+.evidence-preview-placeholder span { font-size: 8px; letter-spacing: 0.5px; text-transform: uppercase; opacity: 0.6; }
+
+/* ── MUGSHOT VIEWER MODAL ── */
+.mv-profile-layout { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: start; }
+.mv-detail-block { margin-bottom: 14px; }
+.mv-detail-block .detail-label { margin-bottom: 3px; }
+.mv-detail-block .detail-value { line-height: 1.6; }
+@media (max-width: 600px) { .mv-profile-layout { grid-template-columns: 1fr; } }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   #sidebar { position: fixed; top: 0; left: 0; bottom: 0; transform: translateX(-100%); z-index: 200; }
@@ -595,31 +640,31 @@ textarea.form-control { resize: vertical; min-height: 80px; }
       <div id="page-wanted" class="page">
         <div class="page-header"><div><h2>Wanted Notices</h2><p>Active and archived wanted persons</p></div><div class="card-actions police-only"><button class="btn btn-primary btn-sm" onclick="openModal('modal-create-wanted')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Wanted Notice</button></div></div>
         <div id="wanted-public" style="display:none;"><div class="card"><div class="card-header"><div class="card-title">Public Wanted List</div><span class="badge badge-danger">ACTIVE NOTICES</span></div><div class="card-body"><div id="wanted-public-grid" class="wanted-public-grid"></div></div></div></div>
-        <div id="wanted-police" style="display:none;"><div class="card"><div class="card-header"><div class="card-title">All Wanted Records</div><div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="wanted-search" placeholder="Search name, ID, charges..." oninput="searchWanted(this.value)"></div></div><div class="table-wrapper"><table><thead><tr><th>Wanted ID</th><th>Suspect Name</th><th>Char ID</th><th>Charges</th><th>Level</th><th>Officer</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="wanted-table-body"></tbody></table></div></div></div>
+        <div id="wanted-police" style="display:none;"><div class="card"><div class="card-header"><div class="card-title">All Wanted Records</div><div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="wanted-search" placeholder="Search name, ID, charges..." oninput="searchWanted(this.value)"></div></div><div class="table-wrapper"><table><thead><tr><th>Wanted ID</th><th>Mugshot</th><th>Suspect Name</th><th>Char ID</th><th>Charges</th><th>Level</th><th>Officer</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="wanted-table-body"></tbody></table></div></div></div>
       </div>
 
       <!-- ═══════════ ARRESTS ═══════════ -->
       <div id="page-arrests" class="page">
         <div class="page-header"><div><h2>Arrest Records</h2><p>All arrest logs and reports</p></div><div class="card-actions"><button class="btn btn-primary btn-sm" onclick="openModal('modal-create-arrest')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Arrest Report</button></div></div>
-        <div class="card"><div class="card-header"><div class="card-title">Arrest Database</div><div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="arrest-search" placeholder="Search suspect, ID..." oninput="searchArrests(this.value)"></div></div><div class="table-wrapper"><table><thead><tr><th>Arrest ID</th><th>Suspect</th><th>Char ID</th><th>Officer</th><th>Charges</th><th>Fine</th><th>Jail Time</th><th>Date</th></tr></thead><tbody id="arrests-table-body"></tbody></table></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Arrest Database</div><div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="arrest-search" placeholder="Search suspect, ID..." oninput="searchArrests(this.value)"></div></div><div class="table-wrapper"><table><thead><tr><th>Arrest ID</th><th>Photo</th><th>Suspect</th><th>Char ID</th><th>Officer</th><th>Charges</th><th>Fine</th><th>Jail Time</th><th>Date</th><th>Actions</th></tr></thead><tbody id="arrests-table-body"></tbody></table></div></div>
       </div>
 
       <!-- ═══════════ CASES ═══════════ -->
       <div id="page-cases" class="page">
         <div class="page-header"><div><h2>Case Files</h2><p>Active and archived investigations</p></div><div class="card-actions"><button class="btn btn-primary btn-sm" onclick="openModal('modal-create-case')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Case</button></div></div>
-        <div class="card"><div class="card-header"><div class="card-title">Case Database</div><div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="case-search" placeholder="Search case title, number..." oninput="searchCases(this.value)"></div></div><div class="table-wrapper"><table><thead><tr><th>Case #</th><th>Title</th><th>Lead Investigator</th><th>Suspects</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="cases-table-body"></tbody></table></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Case Database</div><div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="case-search" placeholder="Search case title, number..." oninput="searchCases(this.value)"></div></div><div class="table-wrapper"><table><thead><tr><th>Case #</th><th>Photo</th><th>Title</th><th>Lead Investigator</th><th>Suspects</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="cases-table-body"></tbody></table></div></div>
       </div>
 
       <!-- ═══════════ EVIDENCE ═══════════ -->
       <div id="page-evidence" class="page">
         <div class="page-header"><div><h2>Evidence Management</h2><p>All uploaded evidence and attachments</p></div><div class="card-actions"><button class="btn btn-primary btn-sm" onclick="openModal('modal-create-evidence')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Upload Evidence</button></div></div>
-        <div class="card"><div class="card-header"><div class="card-title">Evidence Repository</div></div><div class="table-wrapper"><table><thead><tr><th>Evidence ID</th><th>Case #</th><th>Type</th><th>Description</th><th>Uploaded By</th><th>Date</th></tr></thead><tbody id="evidence-table-body"></tbody></table></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Evidence Repository</div></div><div class="table-wrapper"><table><thead><tr><th>Evidence ID</th><th>Preview</th><th>Case #</th><th>Type</th><th>Description</th><th>Uploaded By</th><th>Date</th><th>Actions</th></tr></thead><tbody id="evidence-table-body"></tbody></table></div></div>
       </div>
 
       <!-- ═══════════ CRIMINALS ═══════════ -->
       <div id="page-criminals" class="page">
         <div class="page-header"><div><h2>Criminal Database</h2><p>Records of known criminal individuals</p></div><div class="card-actions"><button class="btn btn-primary btn-sm" onclick="openModal('modal-create-criminal')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Record</button></div></div>
-        <div class="card"><div class="card-header"><div class="card-title">Criminal Records</div><div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="criminal-search" placeholder="Search name or char ID..." oninput="searchCriminals(this.value)"></div></div><div class="table-wrapper"><table><thead><tr><th>Char ID</th><th>Full Name</th><th>Criminal History</th><th>Active Warrants</th><th>Notes</th><th>Added</th></tr></thead><tbody id="criminals-table-body"></tbody></table></div></div>
+        <div class="card"><div class="card-header"><div class="card-title">Criminal Records</div><div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="criminal-search" placeholder="Search name or char ID..." oninput="searchCriminals(this.value)"></div></div><div class="table-wrapper"><table><thead><tr><th>Char ID</th><th>Mugshot</th><th>Full Name</th><th>Criminal History</th><th>Active Warrants</th><th>Notes</th><th>Added</th><th>Actions</th></tr></thead><tbody id="criminals-table-body"></tbody></table></div></div>
       </div>
 
       <!-- ═══════════ VEHICLES ═══════════ -->
@@ -800,8 +845,8 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 ════════════════════════════════════════════════════════════════ -->
 <div id="modal-create-wanted" class="modal-overlay"><div class="modal"><div class="modal-header"><div class="modal-title">New Wanted Notice</div><button class="modal-close" onclick="closeModal('modal-create-wanted')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label>Suspect Name *</label><input type="text" id="w-s-name" class="form-control" placeholder="Full name"></div><div class="form-group"><label>Character ID *</label><input type="text" id="w-charid" class="form-control" placeholder="e.g. CHAR-1234"></div><div class="form-group full"><label>Charges *</label><input type="text" id="w-charges" class="form-control" placeholder="e.g. Robbery, Assault, Murder"></div><div class="form-group full"><label>Crime Description</label><textarea id="w-desc" class="form-control" placeholder="Detailed description..."></textarea></div><div class="form-group"><label>Wanted Level (1-5)</label><input type="number" id="w-level" class="form-control" min="1" max="5" value="1"></div><div class="form-group"><label>Last Known Location</label><input type="text" id="w-location" class="form-control" placeholder="City, area, etc."></div><div class="form-group full"><label>Mugshot Photo (optional)</label><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><label for="w-mugshot-file" class="btn btn-secondary btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Choose Photo</label><input type="file" id="w-mugshot-file" accept="image/*" style="display:none;" onchange="handleMugshotUpload('w-mugshot','w-mugshot-filename','w-mugshot-preview',this)"><span id="w-mugshot-filename" style="font-size:11px;color:var(--gray-400);">No file chosen</span></div><input type="hidden" id="w-mugshot"><div id="w-mugshot-preview" style="margin-top:8px;"></div></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-create-wanted')">Cancel</button><button class="btn btn-primary" onclick="createWanted()">Issue Warrant</button></div></div></div>
 <div id="modal-edit-wanted" class="modal-overlay"><div class="modal"><div class="modal-header"><div class="modal-title">Edit Wanted Record</div><button class="modal-close" onclick="closeModal('modal-edit-wanted')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="ew-id"><div class="form-grid"><div class="form-group full"><label>Charges</label><input type="text" id="ew-charges" class="form-control"></div><div class="form-group full"><label>Crime Description</label><textarea id="ew-desc" class="form-control"></textarea></div><div class="form-group"><label>Wanted Level</label><input type="number" id="ew-level" class="form-control" min="1" max="5"></div><div class="form-group"><label>Last Known Location</label><input type="text" id="ew-location" class="form-control"></div><div class="form-group"><label>Status</label><select id="ew-status" class="form-control"><option>Active</option><option>Captured</option><option>Expired</option></select></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-edit-wanted')">Cancel</button><button class="btn btn-primary" onclick="updateWanted()">Save Changes</button></div></div></div>
-<div id="modal-create-arrest" class="modal-overlay"><div class="modal"><div class="modal-header"><div class="modal-title">New Arrest Report</div><button class="modal-close" onclick="closeModal('modal-create-arrest')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label>Suspect Name *</label><input type="text" id="a-name" class="form-control" placeholder="Full name"></div><div class="form-group"><label>Character ID *</label><input type="text" id="a-charid" class="form-control" placeholder="e.g. CHAR-1234"></div><div class="form-group full"><label>Charges *</label><input type="text" id="a-charges" class="form-control" placeholder="List of charges"></div><div class="form-group"><label>Fine Amount (₱)</label><input type="number" id="a-fine" class="form-control" placeholder="0" min="0"></div><div class="form-group"><label>Jail Time</label><input type="text" id="a-jail" class="form-control" placeholder="e.g. 6 months, Life"></div><div class="form-group"><label>Arrest Location</label><input type="text" id="a-location" class="form-control" placeholder="Location of arrest"></div><div class="form-group"><label>Arrest Date</label><input type="date" id="a-date" class="form-control"></div><div class="form-group"><label>Arrest Time</label><input type="time" id="a-time" class="form-control"></div><div class="form-group full"><label>Evidence / Notes</label><textarea id="a-evidence" class="form-control" placeholder="List evidence, additional notes..."></textarea></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-create-arrest')">Cancel</button><button class="btn btn-primary" onclick="createArrest()">Submit Report</button></div></div></div>
-<div id="modal-create-case" class="modal-overlay"><div class="modal"><div class="modal-header"><div class="modal-title">New Case File</div><button class="modal-close" onclick="closeModal('modal-create-case')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><div class="form-grid"><div class="form-group full"><label>Case Title *</label><input type="text" id="c-title" class="form-control" placeholder="Brief case title"></div><div class="form-group full"><label>Description</label><textarea id="c-desc" class="form-control" placeholder="Case overview and details..."></textarea></div><div class="form-group full"><label>Suspects</label><input type="text" id="c-suspects" class="form-control" placeholder="Comma-separated names or char IDs"></div><div class="form-group full"><label>Witnesses</label><input type="text" id="c-witnesses" class="form-control" placeholder="Comma-separated names"></div><div class="form-group full"><label>Investigation Notes</label><textarea id="c-notes" class="form-control" placeholder="Initial investigation notes..."></textarea></div><div class="form-group full"><label>Timeline</label><textarea id="c-timeline" class="form-control" placeholder="Key events and timeline..."></textarea></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-create-case')">Cancel</button><button class="btn btn-primary" onclick="createCase()">Open Case</button></div></div></div>
+<div id="modal-create-arrest" class="modal-overlay"><div class="modal"><div class="modal-header"><div class="modal-title">New Arrest Report</div><button class="modal-close" onclick="closeModal('modal-create-arrest')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label>Suspect Name *</label><input type="text" id="a-name" class="form-control" placeholder="Full name"></div><div class="form-group"><label>Character ID *</label><input type="text" id="a-charid" class="form-control" placeholder="e.g. CHAR-1234"></div><div class="form-group full"><label>Charges *</label><input type="text" id="a-charges" class="form-control" placeholder="List of charges"></div><div class="form-group"><label>Fine Amount (₱)</label><input type="number" id="a-fine" class="form-control" placeholder="0" min="0"></div><div class="form-group"><label>Jail Time</label><input type="text" id="a-jail" class="form-control" placeholder="e.g. 6 months, Life"></div><div class="form-group"><label>Arrest Location</label><input type="text" id="a-location" class="form-control" placeholder="Location of arrest"></div><div class="form-group"><label>Arrest Date</label><input type="date" id="a-date" class="form-control"></div><div class="form-group"><label>Arrest Time</label><input type="time" id="a-time" class="form-control"></div><div class="form-group full"><label>Evidence / Notes</label><textarea id="a-evidence" class="form-control" placeholder="List evidence, additional notes..."></textarea></div><div class="form-group full"><label>Arrest Photo (optional)</label><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><label for="a-photo-file" class="btn btn-secondary btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Choose Photo</label><input type="file" id="a-photo-file" accept="image/*" style="display:none;" onchange="handleMugshotUpload('a-photo','a-photo-filename','a-photo-preview',this)"><span id="a-photo-filename" style="font-size:11px;color:var(--gray-400);">No file chosen</span></div><input type="hidden" id="a-photo"><div id="a-photo-preview" style="margin-top:8px;"></div></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-create-arrest')">Cancel</button><button class="btn btn-primary" onclick="createArrest()">Submit Report</button></div></div></div>
+<div id="modal-create-case" class="modal-overlay"><div class="modal"><div class="modal-header"><div class="modal-title">New Case File</div><button class="modal-close" onclick="closeModal('modal-create-case')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><div class="form-grid"><div class="form-group full"><label>Case Title *</label><input type="text" id="c-title" class="form-control" placeholder="Brief case title"></div><div class="form-group full"><label>Description</label><textarea id="c-desc" class="form-control" placeholder="Case overview and details..."></textarea></div><div class="form-group full"><label>Suspects</label><input type="text" id="c-suspects" class="form-control" placeholder="Comma-separated names or char IDs"></div><div class="form-group full"><label>Witnesses</label><input type="text" id="c-witnesses" class="form-control" placeholder="Comma-separated names"></div><div class="form-group full"><label>Investigation Notes</label><textarea id="c-notes" class="form-control" placeholder="Initial investigation notes..."></textarea></div><div class="form-group full"><label>Timeline</label><textarea id="c-timeline" class="form-control" placeholder="Key events and timeline..."></textarea></div><div class="form-group full"><label>Case Photo (optional)</label><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><label for="c-photo-file" class="btn btn-secondary btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Choose Photo</label><input type="file" id="c-photo-file" accept="image/*" style="display:none;" onchange="handleMugshotUpload('c-photo','c-photo-filename','c-photo-preview',this)"><span id="c-photo-filename" style="font-size:11px;color:var(--gray-400);">No file chosen</span></div><input type="hidden" id="c-photo"><div id="c-photo-preview" style="margin-top:8px;"></div></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-create-case')">Cancel</button><button class="btn btn-primary" onclick="createCase()">Open Case</button></div></div></div>
 <div id="modal-edit-case" class="modal-overlay"><div class="modal"><div class="modal-header"><div class="modal-title">Edit Case File</div><button class="modal-close" onclick="closeModal('modal-edit-case')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><input type="hidden" id="ec-id"><div class="form-grid"><div class="form-group full"><label>Case Title</label><input type="text" id="ec-title" class="form-control"></div><div class="form-group full"><label>Description</label><textarea id="ec-desc" class="form-control"></textarea></div><div class="form-group full"><label>Suspects</label><input type="text" id="ec-suspects" class="form-control"></div><div class="form-group full"><label>Witnesses</label><input type="text" id="ec-witnesses" class="form-control"></div><div class="form-group full"><label>Investigation Notes</label><textarea id="ec-notes" class="form-control"></textarea></div><div class="form-group full"><label>Timeline</label><textarea id="ec-timeline" class="form-control"></textarea></div><div class="form-group"><label>Status</label><select id="ec-status" class="form-control"><option>Open</option><option>Under Investigation</option><option>Closed</option><option>Archived</option></select></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-edit-case')">Cancel</button><button class="btn btn-primary" onclick="updateCase()">Save Changes</button></div></div></div>
 <div id="modal-create-evidence" class="modal-overlay"><div class="modal"><div class="modal-header"><div class="modal-title">Upload Evidence</div><button class="modal-close" onclick="closeModal('modal-create-evidence')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label>Case Number</label><input type="text" id="ev-case" class="form-control" placeholder="Optional case #"></div><div class="form-group"><label>Evidence Type *</label><select id="ev-type" class="form-control"><option value="">Select type...</option><option>Image</option><option>Video</option><option>Document</option><option>Other</option></select></div><div class="form-group full"><label>Description *</label><textarea id="ev-desc" class="form-control" placeholder="Describe the evidence..."></textarea></div><div class="form-group full"><label>Upload File</label><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><label for="ev-file-input" class="btn btn-secondary btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Choose File</label><input type="file" id="ev-file-input" accept="image/*,.pdf,.mp4,.mov,.avi,.doc,.docx,.txt" style="display:none;" onchange="handleEvidenceUpload(this)"><span id="ev-file-name" style="font-size:11px;color:var(--gray-400);">No file chosen</span></div><input type="hidden" id="ev-url"><div id="ev-file-preview" style="margin-top:8px;"></div></div><div class="form-group full"><label>File Name</label><input type="text" id="ev-filename" class="form-control" placeholder="e.g. photo_001.jpg"></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-create-evidence')">Cancel</button><button class="btn btn-primary" onclick="createEvidence()">Upload</button></div></div></div>
 <div id="modal-create-criminal" class="modal-overlay"><div class="modal"><div class="modal-header"><div class="modal-title">Add Criminal Record</div><button class="modal-close" onclick="closeModal('modal-create-criminal')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body"><div class="form-grid"><div class="form-group"><label>Full Name *</label><input type="text" id="cr-name" class="form-control" placeholder="Full name"></div><div class="form-group"><label>Character ID *</label><input type="text" id="cr-charid" class="form-control" placeholder="Unique character ID"></div><div class="form-group full"><label>Mugshot Photo</label><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><label for="cr-mugshot-file" class="btn btn-secondary btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Choose Photo</label><input type="file" id="cr-mugshot-file" accept="image/*" style="display:none;" onchange="handleMugshotUpload('cr-mugshot','cr-mugshot-filename','cr-mugshot-preview',this)"><span id="cr-mugshot-filename" style="font-size:11px;color:var(--gray-400);">No file chosen</span></div><input type="hidden" id="cr-mugshot"><div id="cr-mugshot-preview" style="margin-top:8px;"></div></div><div class="form-group full"><label>Criminal History</label><textarea id="cr-history" class="form-control" placeholder="Previous criminal background..."></textarea></div><div class="form-group full"><label>Previous Arrests</label><textarea id="cr-arrests" class="form-control" placeholder="List of prior arrests..."></textarea></div><div class="form-group full"><label>Active Warrants</label><textarea id="cr-warrants" class="form-control" placeholder="Current active warrants..."></textarea></div><div class="form-group full"><label>Notes</label><textarea id="cr-notes" class="form-control" placeholder="Additional notes..."></textarea></div></div></div><div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-create-criminal')">Cancel</button><button class="btn btn-primary" onclick="createCriminal()">Add Record</button></div></div></div>
@@ -1050,7 +1095,7 @@ function startPolling() {
     }
     // Always keep badges up to date
     if (currentUser.role === 'superadmin') checkPendingVerifications();
-    updateAppsBadge();
+    if (canReviewApps() || currentUser.role === 'police') updateAppsBadge();
   }, POLL_INTERVAL_MS);
 }
 
@@ -1184,13 +1229,32 @@ async function loadWanted(search='') {
 }
 function renderWantedTable(records) {
   const tbody=document.getElementById('wanted-table-body');
-  if(!records.length){tbody.innerHTML='<tr><td colspan="9"><div class="no-data"><p>No wanted records found</p></div></td></tr>';return;}
-  tbody.innerHTML=records.map(r=>`<tr><td>${escHtml(r.wanted_id)}</td><td style="font-weight:600;color:var(--white)">${escHtml(r.suspect_name)}</td><td>${escHtml(r.character_id)}</td><td>${escHtml(r.charges)}</td><td>${renderStars(r.wanted_level)}</td><td>${escHtml(r.issuing_officer||'—')}</td><td>${formatDate(r.date_issued)}</td><td>${renderStatusBadge(r.status)}</td><td><div class="actions-cell"><button class="btn btn-secondary btn-sm btn-icon" title="Edit" onclick="openEditWanted(${JSON.stringify(r).replace(/"/g,'&quot;')})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="btn btn-danger btn-sm btn-icon" title="Delete" onclick="confirmDeleteWanted(${r.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div></td></tr>`).join('');
+  if(!records.length){tbody.innerHTML='<tr><td colspan="10"><div class="no-data"><p>No wanted records found</p></div></td></tr>';return;}
+  tbody.innerHTML=records.map(r=>`<tr><td>${escHtml(r.wanted_id)}</td><td style="padding:8px 14px;">${r.mugshot_url?`<img src="${escHtml(r.mugshot_url)}" alt="Mugshot" class="criminal-mugshot-thumb" onclick="openWantedViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="Click to view">`:`<div class="criminal-mugshot-placeholder" onclick="openWantedViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="No mugshot — click for details"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>No Photo</span></div>`}</td><td style="font-weight:600;color:var(--white)">${escHtml(r.suspect_name)}</td><td>${escHtml(r.character_id)}</td><td>${escHtml(r.charges)}</td><td>${renderStars(r.wanted_level)}</td><td>${escHtml(r.issuing_officer||'—')}</td><td>${formatDate(r.date_issued)}</td><td>${renderStatusBadge(r.status)}</td><td><div class="actions-cell"><button class="btn btn-secondary btn-sm btn-icon" title="View" onclick="openWantedViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="btn btn-secondary btn-sm btn-icon" title="Edit" onclick="openEditWanted(${JSON.stringify(r).replace(/"/g,'&quot;')})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="btn btn-danger btn-sm btn-icon" title="Delete" onclick="confirmDeleteWanted(${r.id})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div></td></tr>`).join('');
+}
+function openWantedViewer(r) {
+  document.getElementById('wv-id').textContent = r.wanted_id || '—';
+  document.getElementById('wv-name').textContent = r.suspect_name || '—';
+  document.getElementById('wv-charid').textContent = r.character_id || '—';
+  document.getElementById('wv-charges').textContent = r.charges || '—';
+  document.getElementById('wv-level').innerHTML = renderStars(r.wanted_level);
+  document.getElementById('wv-officer').textContent = r.issuing_officer || '—';
+  document.getElementById('wv-location').textContent = r.last_known_location || '—';
+  document.getElementById('wv-date').textContent = formatDate(r.date_issued);
+  document.getElementById('wv-status').innerHTML = renderStatusBadge(r.status);
+  document.getElementById('wv-desc').textContent = r.crime_description || 'No description recorded.';
+  const imgWrap = document.getElementById('wv-mugshot-wrap');
+  if (r.mugshot_url) {
+    imgWrap.innerHTML = `<img src="${escHtml(r.mugshot_url)}" alt="Mugshot of ${escHtml(r.suspect_name)}" style="width:100%;max-width:280px;max-height:340px;object-fit:cover;border-radius:10px;border:2px solid rgba(192,57,43,0.5);box-shadow:0 4px 24px rgba(0,0,0,0.5);">`;
+  } else {
+    imgWrap.innerHTML = `<div style="width:180px;height:220px;background:var(--navy-600);border-radius:10px;border:2px dashed rgba(192,57,43,0.3);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--gray-400);"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span style="font-size:12px;letter-spacing:1px;text-transform:uppercase;">No Photo</span></div>`;
+  }
+  openModal('modal-wanted-viewer');
 }
 function renderWantedPublic(records) {
   const grid=document.getElementById('wanted-public-grid');
   if(!records.length){grid.innerHTML='<div class="no-data" style="grid-column:1/-1"><p>No active wanted persons</p></div>';return;}
-  grid.innerHTML=records.map(r=>`<div class="wanted-card"><div class="wanted-card-mugshot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="wanted-card-body"><h3>${escHtml(r.suspect_name)}</h3><div class="charge">${escHtml(r.charges)}</div><div>${renderStars(r.wanted_level)}</div><div style="margin-top:8px;">${renderStatusBadge(r.status)}</div></div></div>`).join('');
+  grid.innerHTML=records.map(r=>`<div class="wanted-card"><div class="wanted-card-mugshot">${r.mugshot_url?`<img src="${escHtml(r.mugshot_url)}" alt="Mugshot of ${escHtml(r.suspect_name)}" style="width:100%;height:100%;object-fit:cover;">`:`<div style="display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--gray-400);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="width:64px;height:64px;opacity:0.35;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span style="font-size:10px;letter-spacing:1px;text-transform:uppercase;opacity:0.5;">No Photo</span></div>`}</div><div class="wanted-card-body"><h3>${escHtml(r.suspect_name)}</h3><div class="charge">${escHtml(r.charges)}</div><div>${renderStars(r.wanted_level)}</div><div style="margin-top:8px;">${renderStatusBadge(r.status)}</div></div></div>`).join('');
 }
 function searchWanted(val){clearTimeout(searchTimers.wanted);searchTimers.wanted=setTimeout(()=>loadWanted(val),400);}
 async function createWanted() {
@@ -1209,29 +1273,115 @@ function confirmDeleteWanted(id){document.getElementById('confirm-title').textCo
 // ════════════════════════════════════════════════════════════════
 // ARRESTS
 // ════════════════════════════════════════════════════════════════
-async function loadArrests(search=''){const url=search?'/arrests?search='+encodeURIComponent(search):'/arrests';const data=await api('GET',url);if(data.error){toast(data.error,'error');return;}const tbody=document.getElementById('arrests-table-body');const records=data.arrests||[];if(!records.length){tbody.innerHTML='<tr><td colspan="8"><div class="no-data"><p>No arrest records found</p></div></td></tr>';return;}tbody.innerHTML=records.map(r=>`<tr><td>${escHtml(r.arrest_id)}</td><td style="font-weight:600;color:var(--white)">${escHtml(r.suspect_name)}</td><td>${escHtml(r.character_id)}</td><td>${escHtml(r.arresting_officer)}</td><td>${escHtml(r.charges)}</td><td style="color:var(--gold-400)">₱${Number(r.fine_amount||0).toLocaleString()}</td><td>${escHtml(r.jail_time||'—')}</td><td>${formatDate(r.arrest_date)}</td></tr>`).join('');}
+async function loadArrests(search=''){const url=search?'/arrests?search='+encodeURIComponent(search):'/arrests';const data=await api('GET',url);if(data.error){toast(data.error,'error');return;}const tbody=document.getElementById('arrests-table-body');const records=data.arrests||[];if(!records.length){tbody.innerHTML='<tr><td colspan="10"><div class="no-data"><p>No arrest records found</p></div></td></tr>';return;}tbody.innerHTML=records.map(r=>`<tr><td>${escHtml(r.arrest_id)}</td><td style="padding:8px 14px;">${r.photo_url?`<img src="${escHtml(r.photo_url)}" alt="Arrest Photo" class="criminal-mugshot-thumb" onclick="openArrestViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="Click to view" style="cursor:pointer;">`:`<div class="criminal-mugshot-placeholder" onclick="openArrestViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="No photo — click for details" style="cursor:pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span>No Photo</span></div>`}</td><td style="font-weight:600;color:var(--white)">${escHtml(r.suspect_name)}</td><td>${escHtml(r.character_id)}</td><td>${escHtml(r.arresting_officer)}</td><td>${escHtml(r.charges)}</td><td style="color:var(--gold-400)">₱${Number(r.fine_amount||0).toLocaleString()}</td><td>${escHtml(r.jail_time||'—')}</td><td>${formatDate(r.arrest_date)}</td><td><div class="actions-cell"><button class="btn btn-secondary btn-sm btn-icon" title="View Record" onclick="openArrestViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td></tr>`).join('');}
 function searchArrests(val){clearTimeout(searchTimers.arrests);searchTimers.arrests=setTimeout(()=>loadArrests(val),400);}
-async function createArrest(){const body={suspect_name:document.getElementById('a-name').value.trim(),character_id:document.getElementById('a-charid').value.trim(),charges:document.getElementById('a-charges').value.trim(),fine_amount:parseFloat(document.getElementById('a-fine').value)||0,jail_time:document.getElementById('a-jail').value.trim(),arrest_location:document.getElementById('a-location').value.trim(),evidence_notes:document.getElementById('a-evidence').value.trim(),arrest_date:document.getElementById('a-date').value,arrest_time:document.getElementById('a-time').value};if(!body.suspect_name||!body.character_id||!body.charges){toast('Name, Char ID, and Charges required','warning');return;}const res=await api('POST','/arrests/create',body);if(res.error){toast(res.error,'error');return;}toast('Arrest report created: '+res.arrest_id,'success');closeModal('modal-create-arrest');['a-name','a-charid','a-charges','a-jail','a-location','a-evidence'].forEach(id=>document.getElementById(id).value='');document.getElementById('a-fine').value='';loadArrests();}
+function openArrestViewer(r) {
+  document.getElementById('av-id').textContent = r.arrest_id || '—';
+  document.getElementById('av-name').textContent = r.suspect_name || '—';
+  document.getElementById('av-charid').textContent = r.character_id || '—';
+  document.getElementById('av-charges').textContent = r.charges || '—';
+  document.getElementById('av-officer').textContent = r.arresting_officer || '—';
+  document.getElementById('av-location').textContent = r.arrest_location || '—';
+  document.getElementById('av-fine').textContent = '₱' + Number(r.fine_amount||0).toLocaleString();
+  document.getElementById('av-jail').textContent = r.jail_time || '—';
+  document.getElementById('av-date').textContent = formatDate(r.arrest_date);
+  document.getElementById('av-notes').textContent = r.evidence_notes || '—';
+  const imgWrap = document.getElementById('av-photo-wrap');
+  if (r.photo_url) {
+    imgWrap.innerHTML = `<img src="${escHtml(r.photo_url)}" alt="Arrest photo" style="max-width:100%;max-height:340px;object-fit:contain;border-radius:10px;border:2px solid rgba(201,162,39,0.35);box-shadow:0 4px 24px rgba(0,0,0,0.5);">`;
+  } else {
+    imgWrap.innerHTML = `<div style="width:180px;height:160px;background:var(--navy-600);border-radius:10px;border:2px dashed rgba(201,162,39,0.25);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--gray-400);"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><span style="font-size:12px;letter-spacing:1px;text-transform:uppercase;">No Photo</span></div>`;
+  }
+  openModal('modal-arrest-viewer');
+}
+async function createArrest(){const body={suspect_name:document.getElementById('a-name').value.trim(),character_id:document.getElementById('a-charid').value.trim(),charges:document.getElementById('a-charges').value.trim(),fine_amount:parseFloat(document.getElementById('a-fine').value)||0,jail_time:document.getElementById('a-jail').value.trim(),arrest_location:document.getElementById('a-location').value.trim(),evidence_notes:document.getElementById('a-evidence').value.trim(),arrest_date:document.getElementById('a-date').value,arrest_time:document.getElementById('a-time').value,photo_url:document.getElementById('a-photo').value.trim()||null};if(!body.suspect_name||!body.character_id||!body.charges){toast('Name, Char ID, and Charges required','warning');return;}const res=await api('POST','/arrests/create',body);if(res.error){toast(res.error,'error');return;}toast('Arrest report created: '+res.arrest_id,'success');closeModal('modal-create-arrest');['a-name','a-charid','a-charges','a-jail','a-location','a-evidence','a-photo'].forEach(id=>document.getElementById(id).value='');document.getElementById('a-fine').value='';document.getElementById('a-photo-filename').textContent='No file chosen';document.getElementById('a-photo-preview').innerHTML='';document.getElementById('a-photo-file').value='';loadArrests();}
 
 // ════════════════════════════════════════════════════════════════
 // CASES
 // ════════════════════════════════════════════════════════════════
-async function loadCases(search=''){const url=search?'/cases?search='+encodeURIComponent(search):'/cases';const data=await api('GET',url);if(data.error){toast(data.error,'error');return;}const tbody=document.getElementById('cases-table-body');const records=data.cases||[];if(!records.length){tbody.innerHTML='<tr><td colspan="7"><div class="no-data"><p>No case files found</p></div></td></tr>';return;}tbody.innerHTML=records.map(r=>`<tr><td>${escHtml(r.case_number)}</td><td style="font-weight:600;color:var(--white)">${escHtml(r.case_title)}</td><td>${escHtml(r.lead_investigator)}</td><td>${escHtml(r.suspects?r.suspects.substring(0,40)+(r.suspects.length>40?'…':''):'—')}</td><td>${renderCaseStatusBadge(r.status)}</td><td>${formatDate(r.created_at)}</td><td><div class="actions-cell"><button class="btn btn-secondary btn-sm btn-icon" title="Edit" onclick='openEditCase(${JSON.stringify(r).replace(/'/g,"&#39;")})'><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div></td></tr>`).join('');}
+async function loadCases(search=''){const url=search?'/cases?search='+encodeURIComponent(search):'/cases';const data=await api('GET',url);if(data.error){toast(data.error,'error');return;}const tbody=document.getElementById('cases-table-body');const records=data.cases||[];if(!records.length){tbody.innerHTML='<tr><td colspan="8"><div class="no-data"><p>No case files found</p></div></td></tr>';return;}tbody.innerHTML=records.map(r=>`<tr><td>${escHtml(r.case_number)}</td><td style="padding:8px 14px;">${r.photo_url?`<img src="${escHtml(r.photo_url)}" alt="Case Photo" class="criminal-mugshot-thumb" onclick="openCaseViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="Click to view" style="cursor:pointer;">`:`<div class="criminal-mugshot-placeholder" onclick="openCaseViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="No photo — click for details" style="cursor:pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><span>No Photo</span></div>`}</td><td style="font-weight:600;color:var(--white)">${escHtml(r.case_title)}</td><td>${escHtml(r.lead_investigator)}</td><td>${escHtml(r.suspects?r.suspects.substring(0,40)+(r.suspects.length>40?'…':''):'—')}</td><td>${renderCaseStatusBadge(r.status)}</td><td>${formatDate(r.created_at)}</td><td><div class="actions-cell"><button class="btn btn-secondary btn-sm btn-icon" title="View" onclick="openCaseViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="btn btn-secondary btn-sm btn-icon" title="Edit" onclick='openEditCase(${JSON.stringify(r).replace(/'/g,"&#39;")})'><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div></td></tr>`).join('');}
 function searchCases(val){clearTimeout(searchTimers.cases);searchTimers.cases=setTimeout(()=>loadCases(val),400);}
-async function createCase(){const body={case_title:document.getElementById('c-title').value.trim(),description:document.getElementById('c-desc').value.trim(),suspects:document.getElementById('c-suspects').value.trim(),witnesses:document.getElementById('c-witnesses').value.trim(),investigation_notes:document.getElementById('c-notes').value.trim(),timeline:document.getElementById('c-timeline').value.trim()};if(!body.case_title){toast('Case title required','warning');return;}const res=await api('POST','/cases/create',body);if(res.error){toast(res.error,'error');return;}toast('Case opened: '+res.case_number,'success');closeModal('modal-create-case');['c-title','c-desc','c-suspects','c-witnesses','c-notes','c-timeline'].forEach(id=>document.getElementById(id).value='');loadCases();}
+function openCaseViewer(r) {
+  document.getElementById('cv-number').textContent = r.case_number || '—';
+  document.getElementById('cv-title').textContent = r.case_title || '—';
+  document.getElementById('cv-status').innerHTML = renderCaseStatusBadge(r.status);
+  document.getElementById('cv-investigator').textContent = r.lead_investigator || '—';
+  document.getElementById('cv-suspects').textContent = r.suspects || '—';
+  document.getElementById('cv-witnesses').textContent = r.witnesses || '—';
+  document.getElementById('cv-date').textContent = formatDate(r.created_at);
+  document.getElementById('cv-desc').textContent = r.description || '—';
+  document.getElementById('cv-notes').textContent = r.investigation_notes || '—';
+  document.getElementById('cv-timeline').textContent = r.timeline || '—';
+  const imgWrap = document.getElementById('cv-photo-wrap');
+  if (r.photo_url) {
+    imgWrap.style.display = 'block';
+    imgWrap.innerHTML = `<img src="${escHtml(r.photo_url)}" alt="Case photo" style="max-width:100%;max-height:320px;object-fit:contain;border-radius:10px;border:2px solid rgba(201,162,39,0.35);box-shadow:0 4px 24px rgba(0,0,0,0.5);">`;
+  } else {
+    imgWrap.style.display = 'none';
+    imgWrap.innerHTML = '';
+  }
+  openModal('modal-case-viewer');
+}
+async function createCase(){const body={case_title:document.getElementById('c-title').value.trim(),description:document.getElementById('c-desc').value.trim(),suspects:document.getElementById('c-suspects').value.trim(),witnesses:document.getElementById('c-witnesses').value.trim(),investigation_notes:document.getElementById('c-notes').value.trim(),timeline:document.getElementById('c-timeline').value.trim(),photo_url:document.getElementById('c-photo').value.trim()||null};if(!body.case_title){toast('Case title required','warning');return;}const res=await api('POST','/cases/create',body);if(res.error){toast(res.error,'error');return;}toast('Case opened: '+res.case_number,'success');closeModal('modal-create-case');['c-title','c-desc','c-suspects','c-witnesses','c-notes','c-timeline','c-photo'].forEach(id=>document.getElementById(id).value='');document.getElementById('c-photo-filename').textContent='No file chosen';document.getElementById('c-photo-preview').innerHTML='';document.getElementById('c-photo-file').value='';loadCases();}
 function openEditCase(r){document.getElementById('ec-id').value=r.id;document.getElementById('ec-title').value=r.case_title||'';document.getElementById('ec-desc').value=r.description||'';document.getElementById('ec-suspects').value=r.suspects||'';document.getElementById('ec-witnesses').value=r.witnesses||'';document.getElementById('ec-notes').value=r.investigation_notes||'';document.getElementById('ec-timeline').value=r.timeline||'';document.getElementById('ec-status').value=r.status||'Open';openModal('modal-edit-case');}
 async function updateCase(){const body={id:parseInt(document.getElementById('ec-id').value),case_title:document.getElementById('ec-title').value.trim(),description:document.getElementById('ec-desc').value.trim(),suspects:document.getElementById('ec-suspects').value.trim(),witnesses:document.getElementById('ec-witnesses').value.trim(),investigation_notes:document.getElementById('ec-notes').value.trim(),timeline:document.getElementById('ec-timeline').value.trim(),status:document.getElementById('ec-status').value};const res=await api('PUT','/cases/update',body);if(res.error){toast(res.error,'error');return;}toast('Case updated','success');closeModal('modal-edit-case');loadCases();}
 
 // ════════════════════════════════════════════════════════════════
 // EVIDENCE
 // ════════════════════════════════════════════════════════════════
-async function loadEvidence(){const data=await api('GET','/evidence');if(data.error){toast(data.error,'error');return;}const tbody=document.getElementById('evidence-table-body');const records=data.evidence||[];if(!records.length){tbody.innerHTML='<tr><td colspan="6"><div class="no-data"><p>No evidence uploaded</p></div></td></tr>';return;}tbody.innerHTML=records.map(r=>`<tr><td>${escHtml(r.evidence_id)}</td><td>${escHtml(r.case_number||'—')}</td><td><span class="badge badge-warning">${escHtml(r.evidence_type)}</span></td><td>${escHtml(r.description)}</td><td>${escHtml(r.uploaded_by)}</td><td>${formatDate(r.upload_date)}</td></tr>`).join('');}
+async function loadEvidence(){const data=await api('GET','/evidence');if(data.error){toast(data.error,'error');return;}const tbody=document.getElementById('evidence-table-body');const records=data.evidence||[];if(!records.length){tbody.innerHTML='<tr><td colspan="8"><div class="no-data"><p>No evidence uploaded</p></div></td></tr>';return;}
+const isImage=(r)=>r.evidence_type==='Image'||(r.file_url&&/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(r.file_url));
+tbody.innerHTML=records.map(r=>`<tr>
+  <td>${escHtml(r.evidence_id)}</td>
+  <td style="padding:8px 14px;">${r.file_url&&isImage(r)?`<img src="${escHtml(r.file_url)}" alt="Evidence" class="criminal-mugshot-thumb" style="width:64px;height:48px;" onclick="openEvidenceViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="Click to view">`:`<div class="evidence-preview-placeholder" onclick="openEvidenceViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="Click to view details">${r.evidence_type==='Video'?`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="15" height="10" rx="2"/><polygon points="21 12 17 8 17 16"/></svg><span>Video</span>`:r.evidence_type==='Document'?`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Doc</span>`:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><span>File</span>`}</div>`}</td>
+  <td>${escHtml(r.case_number||'—')}</td>
+  <td><span class="badge badge-warning">${escHtml(r.evidence_type)}</span></td>
+  <td>${escHtml(r.description)}</td>
+  <td>${escHtml(r.uploaded_by)}</td>
+  <td>${formatDate(r.upload_date)}</td>
+  <td><div class="actions-cell"><button class="btn btn-secondary btn-sm btn-icon" title="View" onclick="openEvidenceViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td>
+</tr>`).join('');}
+function openEvidenceViewer(r) {
+  document.getElementById('ev-view-id').textContent     = r.evidence_id || '—';
+  document.getElementById('ev-view-case').textContent   = r.case_number  || '—';
+  document.getElementById('ev-view-type').innerHTML     = `<span class="badge badge-warning">${escHtml(r.evidence_type)}</span>`;
+  document.getElementById('ev-view-desc').textContent   = r.description  || '—';
+  document.getElementById('ev-view-by').textContent     = r.uploaded_by  || '—';
+  document.getElementById('ev-view-date').textContent   = formatDate(r.upload_date);
+  document.getElementById('ev-view-name').textContent   = r.file_name    || '—';
+  const wrap = document.getElementById('ev-view-media');
+  const isImg = r.evidence_type==='Image'||(r.file_url&&/\.(jpg|jpeg|png|gif|webp|bmp)(\?|$)/i.test(r.file_url));
+  if (r.file_url && isImg) {
+    wrap.innerHTML = `<img src="${escHtml(r.file_url)}" alt="Evidence" style="max-width:100%;max-height:360px;object-fit:contain;border-radius:8px;border:1px solid rgba(201,162,39,0.2);">`;
+  } else if (r.file_url) {
+    wrap.innerHTML = `<a href="${escHtml(r.file_url)}" target="_blank" class="btn btn-secondary btn-sm" style="display:inline-flex;gap:8px;align-items:center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Open File</a>`;
+  } else {
+    wrap.innerHTML = `<div style="padding:32px;text-align:center;color:var(--gray-400);font-size:13px;">No file attached</div>`;
+  }
+  openModal('modal-evidence-viewer');
+}
 async function createEvidence(){const body={case_number:document.getElementById('ev-case').value.trim(),evidence_type:document.getElementById('ev-type').value,description:document.getElementById('ev-desc').value.trim(),file_url:document.getElementById('ev-url').value.trim(),file_name:document.getElementById('ev-filename').value.trim()};if(!body.evidence_type||!body.description){toast('Type and description required','warning');return;}const res=await api('POST','/evidence/create',body);if(res.error){toast(res.error,'error');return;}toast('Evidence uploaded: '+res.evidence_id,'success');closeModal('modal-create-evidence');['ev-case','ev-desc','ev-url','ev-filename'].forEach(id=>document.getElementById(id).value='');document.getElementById('ev-type').value='';document.getElementById('ev-file-name').textContent='No file chosen';document.getElementById('ev-file-preview').innerHTML='';document.getElementById('ev-file-input').value='';loadEvidence();}
 
 // ════════════════════════════════════════════════════════════════
 // CRIMINALS
 // ════════════════════════════════════════════════════════════════
-async function loadCriminals(search=''){const url=search?'/criminals?search='+encodeURIComponent(search):'/criminals';const data=await api('GET',url);if(data.error){toast(data.error,'error');return;}const tbody=document.getElementById('criminals-table-body');const records=data.criminals||[];if(!records.length){tbody.innerHTML='<tr><td colspan="6"><div class="no-data"><p>No criminal records found</p></div></td></tr>';return;}tbody.innerHTML=records.map(r=>`<tr><td>${escHtml(r.character_id)}</td><td style="font-weight:600;color:var(--white)">${escHtml(r.full_name)}</td><td>${escHtml(r.criminal_history?r.criminal_history.substring(0,60)+(r.criminal_history.length>60?'…':''):'—')}</td><td style="color:${r.active_warrants?'var(--red-400)':'var(--gray-400)'}">${escHtml(r.active_warrants||'None')}</td><td>${escHtml(r.notes?r.notes.substring(0,40)+(r.notes.length>40?'…':''):'—')}</td><td>${formatDate(r.created_at)}</td></tr>`).join('');}
+async function loadCriminals(search=''){const url=search?'/criminals?search='+encodeURIComponent(search):'/criminals';const data=await api('GET',url);if(data.error){toast(data.error,'error');return;}const tbody=document.getElementById('criminals-table-body');const records=data.criminals||[];if(!records.length){tbody.innerHTML='<tr><td colspan="8"><div class="no-data"><p>No criminal records found</p></div></td></tr>';return;}tbody.innerHTML=records.map(r=>`<tr><td>${escHtml(r.character_id)}</td><td style="padding:8px 14px;">${r.mugshot_url?`<img src="${escHtml(r.mugshot_url)}" alt="Mugshot" class="criminal-mugshot-thumb" onclick="openMugshotViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="Click to view">`:`<div class="criminal-mugshot-placeholder" onclick="openMugshotViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})" title="No mugshot — click for details"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>No Photo</span></div>`}</td><td style="font-weight:600;color:var(--white)">${escHtml(r.full_name)}</td><td>${escHtml(r.criminal_history?r.criminal_history.substring(0,60)+(r.criminal_history.length>60?'…':''):'—')}</td><td style="color:${r.active_warrants?'var(--red-400)':'var(--gray-400)'}">${escHtml(r.active_warrants||'None')}</td><td>${escHtml(r.notes?r.notes.substring(0,40)+(r.notes.length>40?'…':''):'—')}</td><td>${formatDate(r.created_at)}</td><td><div class="actions-cell"><button class="btn btn-secondary btn-sm btn-icon" title="View Record" onclick="openMugshotViewer(${JSON.stringify(r).replace(/"/g,'&quot;')})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></td></tr>`).join('');}
+function openMugshotViewer(r) {
+  document.getElementById('mv-name').textContent = r.full_name || '—';
+  document.getElementById('mv-charid').textContent = r.character_id || '—';
+  document.getElementById('mv-history').textContent = r.criminal_history || 'No criminal history recorded.';
+  document.getElementById('mv-arrests').textContent = r.previous_arrests || '—';
+  document.getElementById('mv-warrants').textContent = r.active_warrants || 'None';
+  document.getElementById('mv-notes').textContent = r.notes || '—';
+  document.getElementById('mv-added').textContent = formatDate(r.created_at);
+  const imgWrap = document.getElementById('mv-mugshot-wrap');
+  if (r.mugshot_url) {
+    imgWrap.innerHTML = `<img src="${escHtml(r.mugshot_url)}" alt="Mugshot of ${escHtml(r.full_name)}" style="width:100%;max-width:320px;max-height:380px;object-fit:cover;border-radius:10px;border:2px solid rgba(201,162,39,0.35);box-shadow:0 4px 24px rgba(0,0,0,0.5);">`;
+  } else {
+    imgWrap.innerHTML = `<div style="width:200px;height:240px;background:var(--navy-600);border-radius:10px;border:2px dashed rgba(201,162,39,0.25);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--gray-400);"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span style="font-size:12px;letter-spacing:1px;text-transform:uppercase;">No Photo</span></div>`;
+  }
+  openModal('modal-mugshot-viewer');
+}
 function searchCriminals(val){clearTimeout(searchTimers.criminals);searchTimers.criminals=setTimeout(()=>loadCriminals(val),400);}
 async function createCriminal(){const body={full_name:document.getElementById('cr-name').value.trim(),character_id:document.getElementById('cr-charid').value.trim(),mugshot_url:document.getElementById('cr-mugshot').value.trim(),criminal_history:document.getElementById('cr-history').value.trim(),previous_arrests:document.getElementById('cr-arrests').value.trim(),active_warrants:document.getElementById('cr-warrants').value.trim(),notes:document.getElementById('cr-notes').value.trim()};if(!body.full_name||!body.character_id){toast('Name and Char ID required','warning');return;}const res=await api('POST','/criminals/create',body);if(res.error){toast(res.error,'error');return;}toast('Criminal record added','success');closeModal('modal-create-criminal');['cr-name','cr-charid','cr-mugshot','cr-history','cr-arrests','cr-warrants','cr-notes'].forEach(id=>document.getElementById(id).value='');document.getElementById('cr-mugshot-filename').textContent='No file chosen';document.getElementById('cr-mugshot-preview').innerHTML='';document.getElementById('cr-mugshot-file').value='';loadCriminals();}
 
@@ -1288,12 +1438,49 @@ async function createUser(){const body={username:document.getElementById('u-user
 // APPLICATIONS PAGE
 // ════════════════════════════════════════════════════════════════
 
+// General Officer ranks that can approve/reject applications
+const REVIEWER_RANKS = ['General','Lieutenant General','Major General','Brigadier General'];
+
+function canReviewApps() {
+  if (!currentUser) return false;
+  if (currentUser.role === 'superadmin') return true;
+  if (currentUser.role === 'police' && REVIEWER_RANKS.includes(currentUser.rank)) return true;
+  return false;
+}
+
+function isViewOnlyPolice() {
+  return currentUser && currentUser.role === 'police' && !canReviewApps();
+}
+
 function loadApplicationsPage() {
-  const isSuperadmin = currentUser && currentUser.role === 'superadmin';
-  document.getElementById('app-citizen-view').style.display = isSuperadmin ? 'none' : 'block';
-  document.getElementById('app-admin-view').style.display   = isSuperadmin ? 'block' : 'none';
-  if (isSuperadmin) { loadAdminApps(); }
-  else { checkExistingApps(); }
+  const reviewer  = canReviewApps();
+  const viewOnly  = isViewOnlyPolice();
+  const isCitizen = !reviewer && !viewOnly; // citizen role
+  document.getElementById('app-citizen-view').style.display = isCitizen ? 'block' : 'none';
+  document.getElementById('app-admin-view').style.display   = (reviewer || viewOnly) ? 'block' : 'none';
+
+  if (reviewer || viewOnly) {
+    // Show a notice banner for view-only police
+    let notice = document.getElementById('app-viewonly-notice');
+    if (!notice) {
+      notice = document.createElement('div');
+      notice.id = 'app-viewonly-notice';
+      notice.style.cssText = 'background:rgba(41,128,185,0.1);border:1px solid rgba(41,128,185,0.3);border-radius:8px;padding:10px 16px;font-size:13px;color:#5DADE2;display:flex;align-items:center;gap:10px;margin-bottom:16px;';
+      notice.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span></span>';
+      const adminView = document.getElementById('app-admin-view');
+      adminView.insertBefore(notice, adminView.firstChild);
+    }
+    const span = notice.querySelector('span');
+    if (viewOnly) {
+      notice.style.display = 'flex';
+      span.textContent = 'View only — only General Officers (General, Lt. General, Maj. General, Brig. General) and Superadmins can approve or reject applications.';
+    } else {
+      notice.style.display = 'none';
+    }
+    loadAdminApps();
+  } else {
+    checkExistingApps();
+  }
 }
 
 // — Build question forms —
@@ -1515,13 +1702,14 @@ function buildAppCard(a,type) {
     const weaponQMap=[{key:'q2_motivation',label:'Q2 / 7 — Why obtain a gun license?'},{key:'q3_permitted',label:'Q3 / 7 — Permitted firearms (5+)'},{key:'q4_prohibited',label:'Q4 / 7 — Prohibited firearms (5+)'},{key:'q5_safety_rule',label:'Q5 / 7 — Primary safety rule'},{key:'q6_self_defense',label:'Q6 / 7 — Justifiable self-defense scenario'},{key:'q7_storage',label:'Q7 / 7 — Storage & maintenance steps'}];
     qaHtml+=weaponQMap.map(({key,label})=>`<div class="qa-item"><div class="qa-question">${escHtml(label)}</div><div class="qa-answer ${answers[key]?'':'empty'}">${answers[key]?escHtml(answers[key]):'No answer provided'}</div></div>`).join('');
   }
-  const actionBtns=a.status==='pending'?`<button class="btn btn-success btn-sm" onclick="event.stopPropagation();handleAppDecision(${a.id},'approved','${escHtml(a.submitted_by)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Approve</button><button class="btn btn-danger btn-sm" onclick="event.stopPropagation();handleAppDecision(${a.id},'rejected','${escHtml(a.submitted_by)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Reject</button>`:'';
+  const actionBtns=a.status==='pending' && canReviewApps() ?`<button class="btn btn-success btn-sm" onclick="event.stopPropagation();handleAppDecision(${a.id},'approved','${escHtml(a.submitted_by)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Approve</button><button class="btn btn-danger btn-sm" onclick="event.stopPropagation();handleAppDecision(${a.id},'rejected','${escHtml(a.submitted_by)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Reject</button>`:a.status==='pending'?'<span style="font-size:11px;color:var(--gray-400);font-style:italic;padding:4px 8px;">View Only</span>':'';
   const adminNoteHtml=a.admin_note?`<div style="margin-top:12px;background:rgba(201,162,39,0.06);border:1px solid rgba(201,162,39,0.15);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--gray-200);"><strong style="color:var(--gold-400);">Admin Note:</strong> ${escHtml(a.admin_note)}</div>`:'';
   return `<div class="app-card"><div class="app-card-header" onclick="toggleAppCard(${a.id})"><div class="app-card-meta"><h4>${escHtml(personal.name||a.applicant_name||'—')}&nbsp;${statusBadge}</h4><p>Submitted by: <strong style="color:var(--gold-300);">${escHtml(a.submitted_by||'—')}</strong>${personal.age?`&nbsp;|&nbsp;Age: ${escHtml(personal.age)}`:''}${personal.gender?`&nbsp;|&nbsp;Gender: ${escHtml(personal.gender)}`:''}${personal.years_of_residency?`&nbsp;|&nbsp;Residency: ${escHtml(personal.years_of_residency)}`:''}</p><div class="mono">Submitted: ${formatDate(a.created_at)}&nbsp;|&nbsp;Ref: #${a.id}</div></div><div class="app-card-actions">${actionBtns}<button class="btn btn-secondary btn-sm btn-icon" title="Toggle Details"><svg id="chevron-${a.id}" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></button></div></div><div class="app-card-body" id="${appId}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;background:var(--navy-500);border-radius:8px;padding:14px;"><div><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-400);margin-bottom:4px;">Full Name</div><div style="font-size:14px;color:var(--white);">${escHtml(personal.name||'—')}</div></div><div><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-400);margin-bottom:4px;">Username</div><div style="font-size:14px;color:var(--gold-300);">${escHtml(a.submitted_by||'—')}</div></div>${personal.age?`<div><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-400);margin-bottom:4px;">Age</div><div style="font-size:14px;color:var(--white);">${escHtml(personal.age)}</div></div>`:''}${personal.gender?`<div><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-400);margin-bottom:4px;">Gender</div><div style="font-size:14px;color:var(--white);">${escHtml(personal.gender)}</div></div>`:''}${personal.years_of_residency?`<div><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray-400);margin-bottom:4px;">Years of Residency</div><div style="font-size:14px;color:var(--white);">${escHtml(personal.years_of_residency)}</div></div>`:''}</div>${qaHtml}${adminNoteHtml}</div></div>`;
 }
 function toggleAppCard(id){const body=document.getElementById('app-body-'+id);const chevron=document.getElementById('chevron-'+id);const isOpen=body.classList.toggle('open');if(chevron)chevron.style.transform=isOpen?'rotate(180deg)':'';}
 
 function handleAppDecision(appId,decision,username) {
+  if (!canReviewApps()) { toast('You do not have permission to approve or reject applications.','error'); return; }
   const isApprove=decision==='approved';
   document.getElementById('modal-app-confirm-title').textContent=isApprove?'Approve Application':'Reject Application';
   document.getElementById('modal-app-confirm-msg').textContent=isApprove?`Approve the application from "${username}"? This will grant them the requested access.`:`Reject the application from "${username}"? They will be notified. You may add a reason below.`;
@@ -1594,6 +1782,252 @@ async function saveEditRank() {
   }
 })();
 </script>
+
+<!-- ── ARREST RECORD VIEWER MODAL ── -->
+<div id="modal-arrest-viewer" class="modal-overlay">
+  <div class="modal" style="max-width:720px;">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--gold-400);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px;"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        Arrest Record
+        <span style="font-size:12px;font-weight:400;color:var(--gray-400);margin-left:10px;font-family:var(--font-mono);" id="av-id">—</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-arrest-viewer')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="mv-profile-layout">
+        <div id="av-photo-wrap" style="flex-shrink:0;text-align:center;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="margin-bottom:16px;">
+            <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--white);letter-spacing:1px;" id="av-name">—</div>
+            <div style="font-family:var(--font-mono);font-size:12px;color:var(--gold-400);margin-top:4px;">CHAR ID: <span id="av-charid">—</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="mv-detail-block"><div class="detail-label">Charges</div><div class="detail-value" id="av-charges" style="color:var(--red-400);font-weight:600;">—</div></div>
+            <div class="mv-detail-block"><div class="detail-label">Arresting Officer</div><div class="detail-value" id="av-officer">—</div></div>
+            <div class="mv-detail-block"><div class="detail-label">Arrest Date</div><div class="detail-value" id="av-date">—</div></div>
+            <div class="mv-detail-block"><div class="detail-label">Location</div><div class="detail-value" id="av-location">—</div></div>
+            <div class="mv-detail-block"><div class="detail-label">Fine</div><div class="detail-value" id="av-fine" style="color:var(--gold-400);">—</div></div>
+            <div class="mv-detail-block"><div class="detail-label">Jail Time</div><div class="detail-value" id="av-jail">—</div></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:18px;padding-top:18px;border-top:var(--border);">
+        <div class="mv-detail-block">
+          <div class="detail-label">Evidence / Notes</div>
+          <div class="detail-value" id="av-notes" style="white-space:pre-wrap;line-height:1.65;max-height:120px;overflow-y:auto;background:var(--navy-600);padding:12px;border-radius:var(--radius);font-size:13px;">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-arrest-viewer')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CASE FILE VIEWER MODAL ── -->
+<div id="modal-case-viewer" class="modal-overlay">
+  <div class="modal" style="max-width:720px;">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--gold-400);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        Case File
+        <span style="font-size:12px;font-weight:400;color:var(--gray-400);margin-left:10px;font-family:var(--font-mono);" id="cv-number">—</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-case-viewer')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div id="cv-photo-wrap" style="text-align:center;margin-bottom:18px;display:none;"></div>
+      <div style="margin-bottom:16px;">
+        <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--white);letter-spacing:1px;" id="cv-title">—</div>
+        <div style="margin-top:6px;" id="cv-status">—</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;">
+        <div class="mv-detail-block"><div class="detail-label">Lead Investigator</div><div class="detail-value" id="cv-investigator">—</div></div>
+        <div class="mv-detail-block"><div class="detail-label">Date Opened</div><div class="detail-value" id="cv-date">—</div></div>
+        <div class="mv-detail-block"><div class="detail-label">Suspects</div><div class="detail-value" id="cv-suspects" style="color:var(--red-400);">—</div></div>
+        <div class="mv-detail-block"><div class="detail-label">Witnesses</div><div class="detail-value" id="cv-witnesses">—</div></div>
+      </div>
+      <div style="padding-top:18px;border-top:var(--border);display:flex;flex-direction:column;gap:14px;">
+        <div class="mv-detail-block"><div class="detail-label">Description</div><div class="detail-value" id="cv-desc" style="white-space:pre-wrap;line-height:1.65;max-height:100px;overflow-y:auto;background:var(--navy-600);padding:12px;border-radius:var(--radius);font-size:13px;">—</div></div>
+        <div class="mv-detail-block"><div class="detail-label">Investigation Notes</div><div class="detail-value" id="cv-notes" style="white-space:pre-wrap;line-height:1.65;max-height:100px;overflow-y:auto;background:var(--navy-600);padding:12px;border-radius:var(--radius);font-size:13px;">—</div></div>
+        <div class="mv-detail-block"><div class="detail-label">Timeline</div><div class="detail-value" id="cv-timeline" style="white-space:pre-wrap;line-height:1.65;max-height:100px;overflow-y:auto;background:var(--navy-600);padding:12px;border-radius:var(--radius);font-size:13px;">—</div></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-case-viewer')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EVIDENCE VIEWER MODAL ── -->
+<div id="modal-evidence-viewer" class="modal-overlay">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--gold-400);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Evidence Record
+        <span style="font-size:12px;font-weight:400;color:var(--gray-400);margin-left:10px;font-family:var(--font-mono);" id="ev-view-id">—</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-evidence-viewer')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Media preview -->
+      <div id="ev-view-media" style="margin-bottom:20px;text-align:center;background:var(--navy-600);border-radius:var(--radius);padding:16px;min-height:80px;display:flex;align-items:center;justify-content:center;"></div>
+      <!-- Details grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="mv-detail-block">
+          <div class="detail-label">Type</div>
+          <div class="detail-value" id="ev-view-type">—</div>
+        </div>
+        <div class="mv-detail-block">
+          <div class="detail-label">Case #</div>
+          <div class="detail-value" id="ev-view-case">—</div>
+        </div>
+        <div class="mv-detail-block">
+          <div class="detail-label">Uploaded By</div>
+          <div class="detail-value" id="ev-view-by">—</div>
+        </div>
+        <div class="mv-detail-block">
+          <div class="detail-label">Date Uploaded</div>
+          <div class="detail-value" id="ev-view-date">—</div>
+        </div>
+        <div class="mv-detail-block">
+          <div class="detail-label">File Name</div>
+          <div class="detail-value" id="ev-view-name" style="font-family:var(--font-mono);font-size:12px;">—</div>
+        </div>
+        <div class="mv-detail-block" style="grid-column:1/-1;">
+          <div class="detail-label">Description</div>
+          <div class="detail-value" id="ev-view-desc" style="white-space:pre-wrap;line-height:1.65;">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-evidence-viewer')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── WANTED RECORD VIEWER MODAL ── -->
+<div id="modal-wanted-viewer" class="modal-overlay">
+  <div class="modal" style="max-width:700px;">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--red-400);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Wanted Notice
+        <span style="font-size:12px;font-weight:400;color:var(--gray-400);margin-left:10px;font-family:var(--font-mono);" id="wv-id">—</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-wanted-viewer')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="mv-profile-layout">
+        <!-- Mugshot -->
+        <div id="wv-mugshot-wrap" style="flex-shrink:0;text-align:center;"></div>
+        <!-- Details -->
+        <div>
+          <div style="margin-bottom:16px;">
+            <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--white);letter-spacing:1px;" id="wv-name">—</div>
+            <div style="font-family:var(--font-mono);font-size:12px;color:var(--gray-400);margin-top:4px;">CHAR ID: <span id="wv-charid">—</span></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="mv-detail-block">
+              <div class="detail-label">Status</div>
+              <div class="detail-value" id="wv-status">—</div>
+            </div>
+            <div class="mv-detail-block">
+              <div class="detail-label">Wanted Level</div>
+              <div class="detail-value" id="wv-level">—</div>
+            </div>
+            <div class="mv-detail-block">
+              <div class="detail-label">Issuing Officer</div>
+              <div class="detail-value" id="wv-officer">—</div>
+            </div>
+            <div class="mv-detail-block">
+              <div class="detail-label">Date Issued</div>
+              <div class="detail-value" id="wv-date">—</div>
+            </div>
+            <div class="mv-detail-block" style="grid-column:1/-1;">
+              <div class="detail-label">Charges</div>
+              <div class="detail-value" id="wv-charges" style="color:var(--red-400);font-weight:600;">—</div>
+            </div>
+            <div class="mv-detail-block" style="grid-column:1/-1;">
+              <div class="detail-label">Last Known Location</div>
+              <div class="detail-value" id="wv-location">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:18px;padding-top:18px;border-top:var(--border);">
+        <div class="mv-detail-block">
+          <div class="detail-label">Crime Description</div>
+          <div class="detail-value" id="wv-desc" style="white-space:pre-wrap;line-height:1.65;max-height:120px;overflow-y:auto;background:var(--navy-600);padding:12px;border-radius:var(--radius);font-size:13px;">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-wanted-viewer')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CRIMINAL MUGSHOT VIEWER MODAL ── -->
+<div id="modal-mugshot-viewer" class="modal-overlay">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <div class="modal-title" style="color:var(--gold-400);">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Criminal Record
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-mugshot-viewer')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="mv-profile-layout">
+        <!-- Mugshot image -->
+        <div id="mv-mugshot-wrap" style="flex-shrink:0;text-align:center;"></div>
+        <!-- Details -->
+        <div>
+          <div style="margin-bottom:18px;">
+            <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--white);letter-spacing:1px;" id="mv-name">—</div>
+            <div style="font-family:var(--font-mono);font-size:12px;color:var(--gold-400);margin-top:4px;">CHAR ID: <span id="mv-charid">—</span></div>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:3px;font-family:var(--font-mono);">Added: <span id="mv-added">—</span></div>
+          </div>
+          <div class="mv-detail-block">
+            <div class="detail-label">Active Warrants</div>
+            <div class="detail-value" id="mv-warrants" style="color:var(--red-400);font-weight:600;">—</div>
+          </div>
+          <div class="mv-detail-block">
+            <div class="detail-label">Previous Arrests</div>
+            <div class="detail-value" id="mv-arrests">—</div>
+          </div>
+        </div>
+      </div>
+      <!-- Full-width fields below -->
+      <div style="margin-top:18px;padding-top:18px;border-top:var(--border);">
+        <div class="mv-detail-block">
+          <div class="detail-label">Criminal History</div>
+          <div class="detail-value" id="mv-history" style="white-space:pre-wrap;line-height:1.65;max-height:140px;overflow-y:auto;background:var(--navy-600);padding:12px;border-radius:var(--radius);font-size:13px;">—</div>
+        </div>
+        <div class="mv-detail-block" style="margin-top:14px;">
+          <div class="detail-label">Notes</div>
+          <div class="detail-value" id="mv-notes" style="white-space:pre-wrap;line-height:1.65;color:var(--gray-200);">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-mugshot-viewer')">Close</button>
+    </div>
+  </div>
+</div>
 
 <!-- ── EDIT RANK MODAL ── -->
 <div id="modal-edit-rank" class="modal-overlay">
