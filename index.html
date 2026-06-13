@@ -364,7 +364,46 @@ textarea.form-control { resize: vertical; min-height: 80px; }
 .qa-screenshot { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
 .qa-screenshot a { display: block; }
 .qa-screenshot img { width: 120px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(201,162,39,0.2); transition: transform 0.15s; }
-.qa-screenshot img:hover { transform: scale(1.04); }
+.qa-screenshot img:hover { transform: scale(1.04); cursor: zoom-in; }
+
+/* ── PHOTO LIGHTBOX ── */
+#photo-lightbox {
+  display: none; position: fixed; inset: 0; z-index: 9000;
+  background: rgba(2,11,24,0.94); backdrop-filter: blur(6px);
+  align-items: center; justify-content: center; padding: 20px;
+  flex-direction: column; gap: 16px;
+}
+#photo-lightbox.open { display: flex; }
+#photo-lightbox-img {
+  max-width: 90vw; max-height: 80vh; border-radius: 10px;
+  border: 1px solid rgba(201,162,39,0.3);
+  box-shadow: 0 8px 48px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,162,39,0.1);
+  object-fit: contain; animation: modal-in 0.2s ease;
+}
+#photo-lightbox-footer {
+  display: flex; align-items: center; gap: 12px;
+}
+#photo-lightbox-caption {
+  font-family: var(--font-mono); font-size: 12px; color: var(--gray-300);
+  text-align: center; max-width: 500px; word-break: break-all;
+}
+#photo-lightbox-open-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--navy-600); border: var(--border-active);
+  color: var(--gold-400); border-radius: var(--radius); padding: 6px 14px;
+  font-family: var(--font-display); font-size: 12px; font-weight: 600;
+  letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+  text-decoration: none; transition: background 0.2s;
+}
+#photo-lightbox-open-btn:hover { background: var(--navy-500); }
+#photo-lightbox-close {
+  position: fixed; top: 18px; right: 22px;
+  background: var(--navy-600); border: var(--border);
+  color: var(--gray-300); border-radius: 50%;
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: color 0.15s, background 0.15s; z-index: 1;
+}
+#photo-lightbox-close:hover { color: var(--red-400); background: var(--navy-500); }
 .my-app-card { background: var(--navy-700); border: var(--border); border-radius: var(--radius-lg); padding: 18px 20px; margin-bottom: 14px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .my-app-info h4 { font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 5px; }
 .my-app-info p { font-size: 12px; color: var(--gray-300); line-height: 1.6; }
@@ -1416,7 +1455,7 @@ async function loadAdmin(){
   else{sidebarBadge.textContent=pending.length;sidebarBadge.style.display='block';pendingList.innerHTML=pending.map(u=>`<div class="verify-card"><div class="verify-card-info"><h4>${escHtml(u.username)} <span style="font-size:12px;font-weight:400;color:var(--gray-300);">${escHtml(u.full_name||'')}</span></h4><p><strong style="color:var(--gold-300);">Rank:</strong> ${escHtml(u.rank||'—')} &nbsp;|&nbsp;<strong style="color:var(--gold-300);">Badge:</strong> ${escHtml(u.badge_number||'—')} &nbsp;|&nbsp;<strong style="color:var(--gold-300);">Station:</strong> ${escHtml(u.station||'—')}</p><div class="verify-meta">Registered: ${formatDate(u.created_at)}</div></div><div class="verify-card-actions"><button class="btn btn-secondary btn-sm" onclick="openVerifyModal(${JSON.stringify(u).replace(/"/g,'&quot;')})"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Review</button><button class="btn btn-success btn-sm" onclick="quickApprove(${u.id},'${escHtml(u.username)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Approve</button><button class="btn btn-danger btn-sm" onclick="quickReject(${u.id},'${escHtml(u.username)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Reject</button></div></div>`).join('');}
   const utbody=document.getElementById('users-table-body');
   if(!users.length){utbody.innerHTML='<tr><td colspan="9"><div class="no-data"><p>No users found</p></div></td></tr>';}
-  else{utbody.innerHTML=users.map(u=>`<tr><td>${u.id}</td><td style="font-weight:600;color:var(--white)">${escHtml(u.username)}</td><td>${escHtml(u.full_name||'—')}</td><td><span class="role-badge ${u.role}">${u.role}</span>${u.rank_verification_status==='pending'?'<span class="badge badge-pending" style="margin-left:4px;font-size:9px;">Rank Pending</span>':''}</td><td>${renderUserStatusBadge(u.status)}</td><td style="font-size:12px;color:var(--gray-300);">${escHtml(u.rank||'—')}</td><td>${formatDate(u.created_at)}</td><td>${u.last_login?formatDate(u.last_login):'—'}</td><td><div class="actions-cell">${u.username!=='LIGHTXZXZ'?`<button class="btn btn-secondary btn-sm" onclick="openChangeRole(${u.id},'${escHtml(u.username)}','${u.role}')">Role</button><button class="btn btn-sm" style="background:rgba(214,136,16,0.15);color:#F5B041;border:1px solid rgba(214,136,16,0.3);" onclick="openResetPw(${u.id},'${escHtml(u.username)}')">Reset PW</button><button class="btn btn-sm" style="background:rgba(201,162,39,0.12);color:var(--gold-300);border:1px solid rgba(201,162,39,0.35);" data-uid="${u.id}" data-uname="${escHtml(u.username)}" data-rank="${escHtml(u.rank||'')}" data-badge="${escHtml(u.badge_number||'')}" data-station="${escHtml(u.station||'')}" onclick="openEditRankFromBtn(this)">Rank</button>${u.status==='active'?'<button class="btn btn-danger btn-sm" onclick="setUserStatus('+u.id+',\'suspended\')">Suspend</button>':'<button class="btn btn-success btn-sm" onclick="setUserStatus('+u.id+',\'active\')">Activate</button>'}${u.status!=='banned'?'<button class="btn btn-danger btn-sm" onclick="setUserStatus('+u.id+',\'banned\')">Ban</button>':''}<button class="btn btn-danger btn-sm btn-icon" onclick="confirmDeleteUser(${u.id},'${escHtml(u.username)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:'<span style="color:var(--gray-400);font-size:12px;">Protected</span>'}</div></td></tr>`).join('');}
+  else{utbody.innerHTML=users.map(u=>`<tr><td>${u.id}</td><td style="font-weight:600;color:var(--white)">${escHtml(u.username)}</td><td>${escHtml(u.full_name||'—')}</td><td><span class="role-badge ${u.role}">${u.role}</span>${u.rank_verification_status==='pending'?'<span class="badge badge-pending" style="margin-left:4px;font-size:9px;">Rank Pending</span>':''}</td><td>${renderUserStatusBadge(u.status)}</td><td style="font-size:12px;color:var(--gray-300);">${escHtml(u.rank||'—')}</td><td>${formatDate(u.created_at)}</td><td>${u.last_login?formatDate(u.last_login):'—'}</td><td><div class="actions-cell">${u.username!=='LIGHTXZXZ'?`<button class="btn btn-secondary btn-sm" onclick="openChangeRole(${u.id},'${escHtml(u.username)}','${u.role}')">Role</button><button class="btn btn-sm" style="background:rgba(214,136,16,0.15);color:#F5B041;border:1px solid rgba(214,136,16,0.3);" onclick="openResetPw(${u.id},'${escHtml(u.username)}')">Reset PW</button><button class="btn btn-sm" style="background:rgba(93,173,226,0.12);color:#5DADE2;border:1px solid rgba(93,173,226,0.35);" onclick="openResetCooldown(${u.id},'${escHtml(u.username)}')">Reset CD</button><button class="btn btn-sm" style="background:rgba(201,162,39,0.12);color:var(--gold-300);border:1px solid rgba(201,162,39,0.35);" data-uid="${u.id}" data-uname="${escHtml(u.username)}" data-rank="${escHtml(u.rank||'')}" data-badge="${escHtml(u.badge_number||'')}" data-station="${escHtml(u.station||'')}" onclick="openEditRankFromBtn(this)">Rank</button>${u.status==='active'?'<button class="btn btn-danger btn-sm" onclick="setUserStatus('+u.id+',\'suspended\')">Suspend</button>':'<button class="btn btn-success btn-sm" onclick="setUserStatus('+u.id+',\'active\')">Activate</button>'}${u.status!=='banned'?'<button class="btn btn-danger btn-sm" onclick="setUserStatus('+u.id+',\'banned\')">Ban</button>':''}<button class="btn btn-danger btn-sm btn-icon" onclick="confirmDeleteUser(${u.id},'${escHtml(u.username)}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>`:'<span style="color:var(--gray-400);font-size:12px;">Protected</span>'}</div></td></tr>`).join('');}
   const logs=logsData.logs||[]; const ltbody=document.getElementById('logs-table-body');
   if(!logs.length){ltbody.innerHTML='<tr><td colspan="4"><div class="no-data"><p>No activity logs</p></div></td></tr>';}
   else{ltbody.innerHTML=logs.map(l=>`<tr><td style="font-family:var(--font-mono);font-size:11px;">${formatDate(l.timestamp)}</td><td>${escHtml(l.username||'—')}</td><td><span class="badge badge-warning" style="font-size:9px;">${escHtml(l.action)}</span></td><td>${escHtml(l.details||'—')}</td></tr>`).join('');}
@@ -1430,6 +1469,38 @@ function openChangeRole(id,username,currentRole){document.getElementById('cr-use
 async function changeUserRole(){const user_id=parseInt(document.getElementById('cr-user-id').value);const new_role=document.getElementById('cr-new-role').value;const res=await api('POST','/users/promote',{user_id,new_role});if(res.error){toast(res.error,'error');return;}toast('User role updated','success');closeModal('modal-change-role');loadAdmin();}
 function openResetPw(id,username){document.getElementById('rp-user-id').value=id;document.getElementById('rp-user-name').textContent=username;document.getElementById('rp-password').value='';openModal('modal-reset-pw');}
 async function adminResetPassword(){const user_id=parseInt(document.getElementById('rp-user-id').value);const new_password=document.getElementById('rp-password').value;if(!new_password||new_password.length<6){toast('Password must be at least 6 characters','warning');return;}const res=await api('POST','/users/password',{user_id,new_password});if(res.error){toast(res.error,'error');return;}toast('Password reset successfully','success');closeModal('modal-reset-pw');}
+function openResetCooldown(id, username) {
+  document.getElementById('rcd-user-id').value = id;
+  document.getElementById('rcd-username-display').textContent = username;
+  document.getElementById('rcd-avatar').textContent = (username || '?')[0].toUpperCase();
+  document.getElementById('rcd-type').value = 'both';
+  openModal('modal-reset-cooldown');
+}
+async function adminResetCooldown() {
+  const user_id = parseInt(document.getElementById('rcd-user-id').value);
+  const username = document.getElementById('rcd-username-display').textContent;
+  const uiType = document.getElementById('rcd-type').value;
+
+  // Map frontend select values to backend API values
+  const apiType = uiType === 'weapon' ? 'weapon_license' : uiType;
+
+  const res = await api('POST', '/users/reset-cooldown', { user_id, type: apiType });
+  if (res.error) {
+    toast('Error resetting cooldown: ' + res.error, 'error');
+    return;
+  }
+
+  // Clear localStorage override keys so the user's active session also benefits
+  const localTypes = uiType === 'both' ? ['police', 'weapon'] : [uiType];
+  for (const t of localTypes) {
+    localStorage.removeItem('pnp_cooldown_' + t + '_' + user_id);
+    localStorage.setItem('pnp_cooldown_reset_' + t + '_' + user_id, '1');
+  }
+
+  const typeLabel = uiType === 'both' ? 'Police & Weapon License' : (uiType === 'police' ? 'Police' : 'Weapon License');
+  toast(username + "'s " + typeLabel + " cooldown has been reset.", 'success');
+  closeModal('modal-reset-cooldown');
+}
 async function setUserStatus(user_id,status){const res=await api('POST','/users/status',{user_id,status});if(res.error){toast(res.error,'error');return;}toast('User '+status,'success');loadAdmin();}
 function confirmDeleteUser(id,username){document.getElementById('confirm-title').textContent='Delete User Account';document.getElementById('confirm-message').textContent='Are you sure you want to permanently delete "'+username+'"? This cannot be undone.';document.getElementById('confirm-btn').onclick=async()=>{const res=await api('POST','/users/delete',{user_id:id});if(res.error){toast(res.error,'error');return;}toast('User deleted','success');closeModal('modal-confirm');loadAdmin();};openModal('modal-confirm');}
 async function createUser(){const body={username:document.getElementById('u-username').value.trim(),password:document.getElementById('u-password').value,full_name:document.getElementById('u-fullname').value.trim(),badge_number:document.getElementById('u-badge').value.trim(),role:document.getElementById('u-role').value};if(!body.username||!body.password||!body.role){toast('Username, password, and role required','warning');return;}const res=await api('POST','/users/create',body);if(res.error){toast(res.error,'error');return;}toast('User account created','success');closeModal('modal-create-user');['u-username','u-fullname','u-badge'].forEach(id=>document.getElementById(id).value='');document.getElementById('u-password').value='';document.getElementById('u-role').value='';loadAdmin();}
@@ -1597,41 +1668,316 @@ function switchAdminAppTab(tab) {
   document.querySelectorAll('#admin-app-tabs .tab-btn').forEach((btn, i) => { btn.classList.toggle('active', ['police','weapon'][i]===tab); });
 }
 
+// ════════════════════════════════════════════════════════════════
+// COOLDOWN HELPERS  (1-week cooldown after rejection)
+// ════════════════════════════════════════════════════════════════
+const COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000; // 7 days in ms
+
+function getCooldownKey(type) {
+  return 'pnp_cooldown_' + type + '_' + (currentUser?.id || 'u');
+}
+
+function setCooldown(type, rejectedAt) {
+  // rejectedAt can be a date string from the server or Date.now()
+  const ts = rejectedAt ? new Date(rejectedAt).getTime() : Date.now();
+  localStorage.setItem(getCooldownKey(type), String(ts));
+}
+
+function getCooldownRemaining(type) {
+  // Check if an admin has reset this user's cooldown via the override marker
+  const overrideKey = 'pnp_cooldown_reset_' + type + '_' + (currentUser?.id || 'u');
+  if (localStorage.getItem(overrideKey)) {
+    // Consume the override and clear the cooldown
+    localStorage.removeItem(overrideKey);
+    localStorage.removeItem(getCooldownKey(type));
+    return 0;
+  }
+  const raw = localStorage.getItem(getCooldownKey(type));
+  if (!raw) return 0;
+  const elapsed = Date.now() - parseInt(raw, 10);
+  const remaining = COOLDOWN_MS - elapsed;
+  return remaining > 0 ? remaining : 0;
+}
+
+function clearCooldown(type) {
+  localStorage.removeItem(getCooldownKey(type));
+}
+
+function formatCooldownTime(ms) {
+  if (ms <= 0) return 'now';
+  const totalSec = Math.floor(ms / 1000);
+  const days  = Math.floor(totalSec / 86400);
+  const hours = Math.floor((totalSec % 86400) / 3600);
+  const mins  = Math.floor((totalSec % 3600) / 60);
+  const parts = [];
+  if (days  > 0) parts.push(days  + 'd');
+  if (hours > 0) parts.push(hours + 'h');
+  if (mins  > 0 || parts.length === 0) parts.push(mins + 'm');
+  return parts.join(' ');
+}
+
 // — Show already-applied banners —
-function showAlreadyApplied(type, status) {
+function showAlreadyApplied(type, status, rejectedAt) {
+  const remaining = status === 'rejected' ? getCooldownRemaining(type) : 0;
+
   if (type === 'police') {
-    document.getElementById('police-already-applied').style.display = 'block';
-    document.getElementById('police-app-status-msg').textContent = status==='pending' ? 'Your police application is under review. Please wait for a Superadmin decision.' : (status==='approved' ? 'Your police application was approved!' : 'Your police application was rejected. You may reapply.');
-    document.getElementById('police-form-wrap').style.display = status==='rejected' ? 'block' : 'none';
+    const banner = document.getElementById('police-already-applied');
+    const msgEl  = document.getElementById('police-app-status-msg');
+    banner.style.display = 'block';
+
+    if (status === 'pending') {
+      banner.style.background   = 'rgba(41,128,185,0.10)';
+      banner.style.borderColor  = 'rgba(41,128,185,0.30)';
+      msgEl.style.color         = '#5DADE2';
+      msgEl.textContent = 'Your police application is under review. Please wait for a Superadmin decision.';
+      document.getElementById('police-form-wrap').style.display = 'none';
+      removeCooldownBanner('police');
+    } else if (status === 'approved') {
+      banner.style.background   = 'rgba(26,122,78,0.12)';
+      banner.style.borderColor  = 'rgba(39,174,96,0.30)';
+      msgEl.style.color         = 'var(--green-400)';
+      msgEl.textContent = 'Your police application was approved!';
+      document.getElementById('police-form-wrap').style.display = 'none';
+      clearCooldown('police');
+      removeCooldownBanner('police');
+    } else { // rejected
+      banner.style.background   = 'rgba(192,57,43,0.10)';
+      banner.style.borderColor  = 'rgba(192,57,43,0.30)';
+      msgEl.style.color         = 'var(--red-400)';
+      if (remaining > 0) {
+        msgEl.textContent = 'Your police application was rejected.';
+        showCooldownBanner('police', remaining);
+        document.getElementById('police-form-wrap').style.display = 'none';
+      } else {
+        msgEl.textContent = 'Your police application was rejected. You may reapply.';
+        removeCooldownBanner('police');
+        document.getElementById('police-form-wrap').style.display = 'block';
+      }
+    }
   } else {
-    document.getElementById('weapon-already-applied').style.display = 'block';
-    document.getElementById('weapon-app-status-msg').textContent = status==='pending' ? 'Your weapon license application is under review.' : (status==='approved' ? 'Your weapon license was approved!' : 'Your weapon license application was rejected. You may reapply.');
-    document.getElementById('weapon-form-wrap').style.display = status==='rejected' ? 'block' : 'none';
+    const banner = document.getElementById('weapon-already-applied');
+    const msgEl  = document.getElementById('weapon-app-status-msg');
+    banner.style.display = 'block';
+
+    if (status === 'pending') {
+      banner.style.background   = 'rgba(41,128,185,0.10)';
+      banner.style.borderColor  = 'rgba(41,128,185,0.30)';
+      msgEl.style.color         = '#5DADE2';
+      msgEl.textContent = 'Your weapon license application is under review.';
+      document.getElementById('weapon-form-wrap').style.display = 'none';
+      removeCooldownBanner('weapon');
+    } else if (status === 'approved') {
+      banner.style.background   = 'rgba(26,122,78,0.12)';
+      banner.style.borderColor  = 'rgba(39,174,96,0.30)';
+      msgEl.style.color         = 'var(--green-400)';
+      msgEl.textContent = 'Your weapon license was approved!';
+      document.getElementById('weapon-form-wrap').style.display = 'none';
+      clearCooldown('weapon');
+      removeCooldownBanner('weapon');
+    } else { // rejected
+      banner.style.background   = 'rgba(192,57,43,0.10)';
+      banner.style.borderColor  = 'rgba(192,57,43,0.30)';
+      msgEl.style.color         = 'var(--red-400)';
+      if (remaining > 0) {
+        msgEl.textContent = 'Your weapon license application was rejected.';
+        showCooldownBanner('weapon', remaining);
+        document.getElementById('weapon-form-wrap').style.display = 'none';
+      } else {
+        msgEl.textContent = 'Your weapon license application was rejected. You may reapply.';
+        removeCooldownBanner('weapon');
+        document.getElementById('weapon-form-wrap').style.display = 'block';
+      }
+    }
   }
 }
 
+function showCooldownBanner(type, remainingMs) {
+  const bannerId = 'cooldown-banner-' + type;
+  let el = document.getElementById(bannerId);
+  const wrap = type === 'police'
+    ? document.getElementById('police-already-applied')
+    : document.getElementById('weapon-already-applied');
+  if (!wrap) return;
+
+  if (!el) {
+    el = document.createElement('div');
+    el.id = bannerId;
+    el.style.cssText = [
+      'margin-top:10px',
+      'background:rgba(192,57,43,0.08)',
+      'border:1px solid rgba(192,57,43,0.35)',
+      'border-radius:8px',
+      'padding:12px 16px',
+      'display:flex',
+      'align-items:center',
+      'gap:12px',
+      'font-size:13px',
+    ].join(';');
+    el.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red-400)" stroke-width="2" style="flex-shrink:0;">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="6" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <div style="flex:1;">
+        <div style="color:var(--red-400);font-weight:600;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">
+          Reapplication Cooldown Active
+        </div>
+        <div style="color:var(--gray-200);">
+          You must wait <strong id="${bannerId}-timer" style="color:var(--white);"></strong> before submitting a new application.
+        </div>
+      </div>`;
+    wrap.appendChild(el);
+  }
+
+  // Kick off live countdown
+  const timerId = 'cooldown_interval_' + type;
+  if (window[timerId]) clearInterval(window[timerId]);
+
+  function tick() {
+    const rem = getCooldownRemaining(type);
+    const timerEl = document.getElementById(bannerId + '-timer');
+    if (!timerEl) { clearInterval(window[timerId]); return; }
+    if (rem <= 0) {
+      clearInterval(window[timerId]);
+      removeCooldownBanner(type);
+      // Re-run showAlreadyApplied with 'rejected' but zero remaining — shows form
+      const msgEl = document.getElementById(
+        type === 'police' ? 'police-app-status-msg' : 'weapon-app-status-msg'
+      );
+      if (msgEl) msgEl.textContent = (type === 'police'
+        ? 'Your police application was rejected. You may reapply.'
+        : 'Your weapon license application was rejected. You may reapply.');
+      const formWrap = document.getElementById(type === 'police' ? 'police-form-wrap' : 'weapon-form-wrap');
+      if (formWrap) formWrap.style.display = 'block';
+      return;
+    }
+    timerEl.textContent = formatCooldownTime(rem);
+  }
+  tick();
+  window[timerId] = setInterval(tick, 30000); // update every 30 s
+}
+
+function removeCooldownBanner(type) {
+  const el = document.getElementById('cooldown-banner-' + type);
+  if (el) el.remove();
+  const timerId = 'cooldown_interval_' + type;
+  if (window[timerId]) { clearInterval(window[timerId]); window[timerId] = null; }
+}
+
+
 // — Submit Police App —
 async function submitPoliceApp() {
-  const name=(document.getElementById('p-name')?.value||'').trim(); const age=(document.getElementById('p-age')?.value||'').trim();
-  const gender=(document.getElementById('p-gender')?.value||'').trim(); const residency=(document.getElementById('p-residency')?.value||'').trim();
-  const statsUrl=(document.getElementById('p-stats-url')?.value||'').trim();
-  if(!name||!age||!gender||!residency){toast('Please fill in all personal information fields.','warning');return;}
-  if(!statsUrl){toast('Please provide your /stats screenshot URL.','warning');return;}
-  const answers=POLICE_QUESTIONS.map((_,i)=>(document.getElementById('pq-'+i)?.value||'').trim());
-  const emptyIdx=answers.findIndex(a=>a.length<10);
-  if(emptyIdx!==-1){toast('Question '+(emptyIdx+3)+' needs a more complete answer.','warning');return;}
-  const btn=document.getElementById('police-submit-btn'); btn.disabled=true; btn.innerHTML='<div class="spinner"></div> Submitting...';
-  const payload={application_type:'police',applicant_name:name,submitted_by:currentUser?.username,user_id:currentUser?.id,answers:{personal_info:{name,age,gender,years_of_residency:residency},stats_screenshot:statsUrl,q3_motivation:answers[0],q4_experience:answers[1],q5_high_pressure:answers[2],q6_rule_breaker:answers[3],q7_benefits:answers[4],q8_force_matrix_4:answers[5],q9_force_matrix_5:answers[6],q10_success:answers[7]}};
-  const res=await api('POST','/applications/create',payload);
-  btn.disabled=false; btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Submit Application';
-  if(res.error){toast(res.error,'error');return;}
-  toast('Police application submitted successfully! Awaiting review.','success');
-  document.getElementById('p-stats-url').value=''; document.getElementById('p-stats-filename').textContent='No file chosen'; document.getElementById('p-stats-preview').innerHTML=''; document.getElementById('p-stats-file').value='';
-  showAlreadyApplied('police','pending');
+
+  // Cooldown guard
+  const policeCooldown = getCooldownRemaining('police');
+  if (policeCooldown > 0) {
+    toast('You are on a reapplication cooldown. Please wait ' + formatCooldownTime(policeCooldown) + ' before reapplying.', 'error');
+    return;
+  }
+
+  const name = (document.getElementById('p-name')?.value || '').trim();
+  const age = (document.getElementById('p-age')?.value || '').trim();
+  const gender = (document.getElementById('p-gender')?.value || '').trim();
+  const residency = (document.getElementById('p-residency')?.value || '').trim();
+  const statsUrl = (document.getElementById('p-stats-url')?.value || '').trim();
+
+  if (!name || !age || !gender || !residency) {
+    toast('Please fill in all personal information fields.', 'warning');
+    return;
+  }
+
+  if (!statsUrl) {
+    toast('Please provide your /stats screenshot URL.', 'warning');
+    return;
+  }
+
+  const answers = POLICE_QUESTIONS.map((_, i) =>
+    (document.getElementById('pq-' + i)?.value || '').trim()
+  );
+
+  const emptyIdx = answers.findIndex(a => a.length < 10);
+
+  if (emptyIdx !== -1) {
+    toast(
+      'Question ' + (emptyIdx + 3) + ' needs a more complete answer.',
+      'warning'
+    );
+    return;
+  }
+
+  const btn = document.getElementById('police-submit-btn');
+
+  btn.disabled = true;
+  btn.innerHTML =
+    '<div class="spinner"></div> Submitting...';
+
+  const payload = {
+    application_type: 'police',
+    applicant_name: name,
+    submitted_by: currentUser?.username,
+    user_id: currentUser?.id,
+    answers: {
+      personal_info: {
+        name,
+        age,
+        gender,
+        years_of_residency: residency
+      },
+      stats_screenshot: statsUrl,
+      q3_motivation: answers[0],
+      q4_experience: answers[1],
+      q5_high_pressure: answers[2],
+      q6_rule_breaker: answers[3],
+      q7_benefits: answers[4],
+      q8_force_matrix_4: answers[5],
+      q9_force_matrix_5: answers[6],
+      q10_success: answers[7]
+    }
+  };
+
+  const res = await api(
+    'POST',
+    '/applications/create',
+    payload
+  );
+
+  btn.disabled = false;
+
+  btn.innerHTML =
+    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Submit Application';
+
+  if (res.error) {
+    toast(res.error, 'error');
+    return;
+  }
+
+  toast(
+    'Police application submitted successfully!',
+    'success'
+  );
+
+  document.getElementById('p-stats-url').value = '';
+  document.getElementById('p-stats-filename').textContent = 'No file chosen';
+  document.getElementById('p-stats-preview').innerHTML = '';
+  document.getElementById('p-stats-file').value = '';
+
+  // HIDE THE BLUE "UNDER REVIEW" MESSAGE
+  document.getElementById('police-already-applied').style.display = 'none';
+
+  // KEEP THE FORM VISIBLE
+  document.getElementById('police-form-wrap').style.display = 'block';
 }
+
+
 
 // — Submit Weapon App —
 async function submitWeaponApp() {
+  // Cooldown guard
+  const weaponCooldown = getCooldownRemaining('weapon');
+  if (weaponCooldown > 0) {
+    toast('You are on a reapplication cooldown. Please wait ' + formatCooldownTime(weaponCooldown) + ' before reapplying.', 'error');
+    return;
+  }
+
   const name=(document.getElementById('w-name')?.value||'').trim(); const age=(document.getElementById('w-age')?.value||'').trim(); const gender=(document.getElementById('w-gender')?.value||'').trim();
   if(!name||!age||!gender){toast('Please fill in all personal information fields.','warning');return;}
   const answers=WEAPON_QUESTIONS.map((_,i)=>(document.getElementById('wq-'+i)?.value||'').trim());
@@ -1642,7 +1988,7 @@ async function submitWeaponApp() {
   const res=await api('POST','/applications/create',payload);
   btn.disabled=false; btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Submit Application';
   if(res.error){toast(res.error,'error');return;}
-  toast('Weapon license application submitted! Awaiting review.','success'); showAlreadyApplied('weapon','pending');
+  toast('Weapon license application submitted! Awaiting review.','success'); showAlreadyApplied('weapon','pending',null);
 }
 
 // — My Applications status tab —
@@ -1663,11 +2009,31 @@ async function loadMyApplications() {
 
 // — Check existing apps on page load —
 async function checkExistingApps() {
-  const res=await api('GET','/applications/my'); const apps=res.applications||[];
-  const policeApp=apps.find(a=>a.application_type==='police'&&a.status!=='rejected');
-  const weaponApp=apps.find(a=>a.application_type==='weapon_license'&&a.status!=='rejected');
-  if(policeApp)showAlreadyApplied('police',policeApp.status);
-  if(weaponApp)showAlreadyApplied('weapon',weaponApp.status);
+  const res = await api('GET', '/applications/my');
+  const apps = res.applications || [];
+
+  // For each type, find the most-recent app (any status)
+  const latestByType = {};
+  for (const a of apps) {
+    const t = a.application_type === 'weapon_license' ? 'weapon' : a.application_type;
+    if (!latestByType[t] || new Date(a.created_at) > new Date(latestByType[t].created_at)) {
+      latestByType[t] = a;
+    }
+  }
+
+  for (const [type, app] of Object.entries(latestByType)) {
+    if (app.status === 'rejected') {
+      // Seed the cooldown timer from the server's reviewed_at timestamp (once)
+      const key = getCooldownKey(type);
+      if (!localStorage.getItem(key)) {
+        setCooldown(type, app.reviewed_at || app.updated_at || null);
+      }
+    } else {
+      // Approved / pending — clear any lingering cooldown
+      clearCooldown(type);
+    }
+    showAlreadyApplied(type, app.status, app.reviewed_at || app.updated_at);
+  }
 }
 
 // — Admin: load all applications —
@@ -1695,7 +2061,7 @@ function buildAppCard(a,type) {
   const statusBadge=a.status==='pending'?'<span class="badge badge-pending">Pending Review</span>':a.status==='approved'?'<span class="badge badge-approved">Approved</span>':'<span class="badge badge-rejected">Rejected</span>';
   let qaHtml='';
   if(type==='police'){
-    if(answers.stats_screenshot){qaHtml+=`<div class="qa-item"><div class="qa-question">Q2 / 10 — /stats Screenshot</div><div class="qa-screenshot"><a href="${escHtml(answers.stats_screenshot)}" target="_blank"><img src="${escHtml(answers.stats_screenshot)}" alt="Stats" onerror="this.parentElement.innerHTML='[Image failed to load]'"></a></div></div>`;}
+    if(answers.stats_screenshot){qaHtml+=`<div class="qa-item"><div class="qa-question">Q2 / 10 — /stats Screenshot</div><div class="qa-screenshot"><img src="${escHtml(answers.stats_screenshot)}" alt="Stats" title="Click to preview" onclick="openPhotoLightbox('${escHtml(answers.stats_screenshot).replace(/'/g,"\\'")}','Stats Screenshot')" onerror="this.outerHTML='<span style=\\'font-size:12px;color:var(--red-400);\\'>Image failed to load</span>'"></div></div>`;}
     const policeQMap=[{key:'q3_motivation',label:'Q3 / 10 — Why join PNP?'},{key:'q4_experience',label:'Q4 / 10 — Law enforcement experience'},{key:'q5_high_pressure',label:'Q5 / 10 — Handling high-pressure situations'},{key:'q6_rule_breaker',label:'Q6 / 10 — Fellow officer breaking rules'},{key:'q7_benefits',label:'Q7 / 10 — Benefits of having you'},{key:'q8_force_matrix_4',label:'Q8 / 10 — Force Matrix Level 4'},{key:'q9_force_matrix_5',label:'Q9 / 10 — Force Matrix Level 5'},{key:'q10_success',label:'Q10 / 10 — Definition of success'}];
     qaHtml+=policeQMap.map(({key,label})=>`<div class="qa-item"><div class="qa-question">${escHtml(label)}</div><div class="qa-answer ${answers[key]?'':'empty'}">${answers[key]?escHtml(answers[key]):'No answer provided'}</div></div>`).join('');
   } else {
@@ -1720,6 +2086,13 @@ function handleAppDecision(appId,decision,username) {
     const res=await api('POST','/applications/decision',{application_id:appId,decision,admin_note:note});
     btn.disabled=false; btn.textContent=isApprove?'✓ Approve':'✗ Reject';
     if(res.error){toast(res.error,'error');return;}
+    // If rejecting an application that belongs to the current user, start their cooldown immediately
+    if (!isApprove && username === currentUser?.username) {
+      const appTypeEl = document.querySelector(`[data-app-id="${appId}"]`);
+      const inferredType = appTypeEl ? appTypeEl.dataset.appType : null;
+      // Fallback: set cooldown for both types to be safe when same user
+      ['police','weapon'].forEach(t => setCooldown(t, Date.now()));
+    }
     toast(isApprove?'Application approved!':'Application rejected.',isApprove?'success':'warning');
     closeModal('modal-app-confirm'); loadAdminApps();
   };
@@ -1769,6 +2142,27 @@ async function saveEditRank() {
   closeModal('modal-edit-rank');
   loadAdmin();
 }
+
+// ════════════════════════════════════════════════════════════════
+// PHOTO LIGHTBOX
+// ════════════════════════════════════════════════════════════════
+function openPhotoLightbox(url, caption) {
+  const lb = document.getElementById('photo-lightbox');
+  const img = document.getElementById('photo-lightbox-img');
+  const cap = document.getElementById('photo-lightbox-caption');
+  const btn = document.getElementById('photo-lightbox-open-btn');
+  img.src = url;
+  cap.textContent = caption || url;
+  btn.href = url;
+  lb.classList.add('open');
+  document.addEventListener('keydown', _lbKeyHandler);
+}
+function closePhotoLightbox() {
+  document.getElementById('photo-lightbox').classList.remove('open');
+  document.getElementById('photo-lightbox-img').src = '';
+  document.removeEventListener('keydown', _lbKeyHandler);
+}
+function _lbKeyHandler(e) { if (e.key === 'Escape') closePhotoLightbox(); }
 
 // ════════════════════════════════════════════════════════════════
 // BOOTSTRAP
@@ -2025,6 +2419,64 @@ async function saveEditRank() {
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-mugshot-viewer')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PHOTO LIGHTBOX ── -->
+<div id="photo-lightbox" onclick="if(event.target===this)closePhotoLightbox()">
+  <button id="photo-lightbox-close" onclick="closePhotoLightbox()" title="Close">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <img id="photo-lightbox-img" src="" alt="Preview">
+  <div id="photo-lightbox-footer">
+    <span id="photo-lightbox-caption"></span>
+    <a id="photo-lightbox-open-btn" href="#" target="_blank" rel="noopener">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Open in New Tab
+    </a>
+  </div>
+</div>
+
+<!-- ── RESET COOLDOWN MODAL ── -->
+<div id="modal-reset-cooldown" class="modal-overlay">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <div class="modal-title" style="color:#5DADE2;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-3px;margin-right:6px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Reset Application Cooldown
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-reset-cooldown')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="rcd-user-id">
+      <div style="background:var(--navy-600);border-radius:var(--radius);padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--navy-500),#5DADE2);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--white);flex-shrink:0;" id="rcd-avatar">?</div>
+        <div>
+          <div style="font-weight:600;color:var(--white);font-size:14px;" id="rcd-username-display">—</div>
+          <div style="font-size:11px;color:var(--gray-400);margin-top:2px;">Reset reapplication cooldown for this user</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Application Type to Reset</label>
+        <select id="rcd-type" class="form-control">
+          <option value="both">Both (Police &amp; Weapon License)</option>
+          <option value="police">Police Application Only</option>
+          <option value="weapon">Weapon License Only</option>
+        </select>
+      </div>
+      <div style="background:rgba(93,173,226,0.07);border:1px solid rgba(93,173,226,0.2);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--gray-300);margin-top:4px;line-height:1.7;">
+        <strong style="color:#5DADE2;">Note:</strong> This removes the 7-day cooldown applied after a rejection, allowing the user to resubmit their application immediately.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-reset-cooldown')">Cancel</button>
+      <button class="btn btn-primary" onclick="adminResetCooldown()" style="background:linear-gradient(135deg,#2980B9,#5DADE2);color:var(--white);">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Reset Cooldown
+      </button>
     </div>
   </div>
 </div>
