@@ -1601,21 +1601,68 @@ function updateWeaponProgress() {
   document.getElementById('weapon-progress-bar').style.width = Math.round(filled / total * 100) + '%';
 }
 
-// — Stats photo upload —
+// — Stats photo upload (canvas-compressed to stay under Worker request limits) —
 function handleStatsUpload(input) {
   const file = input.files[0];
   const nameEl = document.getElementById('p-stats-filename');
-  const prev = document.getElementById('p-stats-preview');
+  const prev   = document.getElementById('p-stats-preview');
   const hidden = document.getElementById('p-stats-url');
-  if (!file) { nameEl.textContent = 'No file chosen'; prev.innerHTML = ''; hidden.value = ''; updatePoliceProgress(); return; }
-  nameEl.textContent = file.name;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    hidden.value = e.target.result;
-    prev.innerHTML = `<img src="${e.target.result}" alt="Stats Preview" style="width:180px;height:110px;object-fit:cover;border-radius:8px;border:1px solid rgba(201,162,39,0.2);margin-top:8px;">`;
+
+  if (!file) {
+    nameEl.textContent = 'No file chosen';
+    prev.innerHTML = '';
+    hidden.value = '';
+    updatePoliceProgress();
+    return;
+  }
+
+  if (file.size > 8 * 1024 * 1024) {
+    toast('Image is too large (max 8 MB). Please use a smaller screenshot.', 'error');
+    input.value = '';
+    return;
+  }
+
+  nameEl.textContent = file.name + ' (processing…)';
+
+  const img = new Image();
+  const objectUrl = URL.createObjectURL(file);
+  img.onload = function () {
+    URL.revokeObjectURL(objectUrl);
+    const MAX_DIM = 1280;
+    let w = img.naturalWidth, h = img.naturalHeight;
+    if (w > MAX_DIM || h > MAX_DIM) {
+      if (w >= h) { h = Math.round(h * MAX_DIM / w); w = MAX_DIM; }
+      else        { w = Math.round(w * MAX_DIM / h); h = MAX_DIM; }
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    let dataUrl = '';
+    for (const q of [0.7, 0.5, 0.35, 0.2]) {
+      dataUrl = canvas.toDataURL('image/jpeg', q);
+      if (dataUrl.length < 200 * 1024) break;
+    }
+    if (dataUrl.length > 500 * 1024) {
+      toast('Screenshot is still too large after compression. Please crop or resize it and try again.', 'error');
+      nameEl.textContent = 'No file chosen';
+      input.value = '';
+      hidden.value = '';
+      updatePoliceProgress();
+      return;
+    }
+    hidden.value = dataUrl;
+    nameEl.textContent = file.name;
+    prev.innerHTML = `<img src="${dataUrl}" alt="Stats Preview" style="width:180px;height:110px;object-fit:cover;border-radius:8px;border:1px solid rgba(201,162,39,0.2);margin-top:8px;">`;
     updatePoliceProgress();
   };
-  reader.readAsDataURL(file);
+  img.onerror = function () {
+    URL.revokeObjectURL(objectUrl);
+    toast('Could not read the image. Please try a different screenshot.', 'error');
+    input.value = '';
+    nameEl.textContent = 'No file chosen';
+    updatePoliceProgress();
+  };
+  img.src = objectUrl;
 }
 
 // — Generic mugshot/photo upload (for wanted & criminal records) —
@@ -1933,6 +1980,14 @@ async function submitPoliceApp() {
       q10_success: answers[7]
     }
   };
+
+  const payloadStr = JSON.stringify(payload);
+  if (payloadStr.length > 900 * 1024) {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Submit Application';
+    toast('Your screenshot is too large to submit. Please upload a smaller or cropped image.', 'error');
+    return;
+  }
 
   const res = await api(
     'POST',
